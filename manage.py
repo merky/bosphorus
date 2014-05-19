@@ -6,7 +6,7 @@ from bosphorus import create_app
 from bosphorus.models import db, User
 
 env = os.environ.get('APPNAME_ENV', 'prod')
-app = create_app('appname.settings.%sConfig' % env.capitalize(), env=env)
+app = create_app('bosphorus.settings.%sConfig' % env.capitalize(), env=env)
 
 manager = Manager(app)
 manager.add_command("server", Server())

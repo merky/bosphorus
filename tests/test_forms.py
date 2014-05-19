@@ -1,12 +1,12 @@
 #! ../env/bin/python
 # -*- coding: utf-8 -*-
-from appname import create_app
-from appname.models import db
+from bosphorus import create_app
+from bosphorus.models import db
 
 
 class TestForm:
     def setup(self):
-        app = create_app('appname.settings.DevConfig', env='dev')
+        app = create_app('bosphorus.settings.DevConfig', env='dev')
         self.app = app.test_client()
         db.app = app
         db.create_all()

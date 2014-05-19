@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, flash, request
 
-from appname import cache
-from appname.forms import MyForm
+from bosphorus import cache
+from bosphorus.forms import MyForm
 
 main = Blueprint('main', __name__)
 
