@@ -5,6 +5,7 @@ Flask-SQLAlchemy==1.0
 Flask-Script==0.6.2
 Flask-WTF==0.9.2
 Jinja2==2.7.1
+CherryPy==3.3.0
 MarkupSafe==0.18
 Pygments==1.6
 SQLAlchemy==0.8.2
