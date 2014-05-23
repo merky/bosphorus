@@ -1,0 +1,19 @@
+{% macro render_field(field, label_visible=true) -%}
+    <div class="form-group {% if field.errors %}has-error{% endif %} {{ kwargs.pop('class_', '') }}">
+    {% if field.type != 'HiddenField' and label_visible %}
+        <label for="{{ field.id }}" class="col-sm-3 control-label">{{ field.label.text }}</label>
+    {% endif %}
+    <div class="col-sm-5">
+        {{ field(class_='form-control', **kwargs) }}
+    </div>
+    {% if field.errors %}
+        {% for e in field.errors %}
+            <p class="help-block">{{ e }}</p>
+        {% endfor %}
+    {% endif %}
+    </div>
+{%- endmacro %}
+
+{% macro render_nav_item(loc,title) -%}
+<li {% if url_for(loc) == request.path %}class="active"{% endif %}><a href="{{ url_for(loc) }}">{{ title }}</a></li>
+{%- endmacro %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Persons{% endblock %}
+
+{% block body %}
+    <p class="lead">Persons</p>
+    <table class="table table-condensed table-striped">
+        <tr>
+            <th>Research ID</th>
+            <th>Clinical ID</th>
+            <th>Name</th>
+            <th>DOB</th>
+            <th>SSN</th>
+        </tr>
+    {% for person in persons %}
+        <tr>
+            <td><a href="{{ url_for('person.index', research_id=person.research_id)}}">{{ person.research_id }}</a></td>
+            <td>{{ person.clinical_id }}</td>
+            <td>{{ person.first_name }} {{ person.last_name }}</td>
+            <td>{{ person.dob | format_date }}</td>
+            <td>{{ person.ssn }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}

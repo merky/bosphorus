@@ -1,3 +1,4 @@
+{% import  "macros.html" as macros %}
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -30,12 +31,20 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Appname</a>
+                <a class="navbar-brand" href="#"><i class="fa fa-exchange"></i> Bosphorus</a>
             </div>
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="{{ url_for('.home') }}">Home</a></li>
-                    <li><a href="{{ url_for('.wtform') }}">WTForms Example</a></li>
+                    {% block nav %}
+
+                        {{ macros.render_nav_item('person.list','Persons') }}
+                        {{ macros.render_nav_item('person.new', 'Add Person') }}
+                        {{ macros.render_nav_item('main.ids', 'IDs') }}
+                        {{ macros.render_nav_item('main.studies_new', 'Incoming Studies') }}
+                        {{ macros.render_nav_item('user.list', 'Users') }}
+                        {{ macros.render_nav_item('user.login', 'Login') }}
+
+                    {% endblock %}
                 </ul>
             </div><!--/.nav-collapse -->
         </div>
@@ -44,7 +53,7 @@
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    <div class="alert alert-{{ category if category!="message" else 'info' }}">{{ message }}</div>
                     {% endfor %}
                 {% endif %}
             {% endwith %}

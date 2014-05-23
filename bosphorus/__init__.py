@@ -17,16 +17,6 @@ assets_env = Environment()
 
 
 def create_app(object_name, env="prod"):
-    """
-    An flask application factory, as explained here:
-    http://flask.pocoo.org/docs/patterns/appfactories/
-
-    Arguments:
-        object_name: the python path of the config object,
-                     e.g. appname.settings.ProdConfig
-
-        env: The name of the current environment, e.g. prod or dev
-    """
 
     app = Flask(__name__)
 
@@ -47,14 +37,18 @@ def create_app(object_name, env="prod"):
 
     # register our blueprints
     from controllers.main import main
+    from controllers.user import user
+    from controllers.person import person
     app.register_blueprint(main)
+    app.register_blueprint(user)
+    app.register_blueprint(person)
 
     return app
 
 if __name__ == '__main__':
     # Import the config for the proper environment using the
     # shell var APPNAME_ENV
-    env = os.environ.get('APPNAME_ENV', 'prod')
+    env = os.environ.get('BOSPHORUS_ENV', 'prod')
     app = create_app('bosphorus.settings.%sConfig' % env.capitalize(), env=env)
 
     app.run()

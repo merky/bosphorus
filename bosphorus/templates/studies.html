@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Incoming Studies{% endblock %}
+
+{% block body %}
+    <p class="lead">Incoming Studies</p>
+    <table class="table table-condensed table-striped">
+        <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Description</th>
+            <th>Patient Name</th>
+            <th>Patient DOB</th>
+            <th>Patient ID</th>
+        </tr>
+    {% for study in studies %}
+        <tr>
+            <td>{{ study.date | format_date }}</td>
+            <td>{{ study.time }}</td>
+            <td>{{ study.description }}</td>
+            <td>{{ study.patient.name }}</td>
+            <td>{{ study.patient.dob | format_date }}</td>
+            <td>{{ study.patient.patient_id }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}

@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}Starter Template{% endblock %}
+{% block title %}Bosphorus - Home{% endblock %}
 
 {% block body %}
-    <h1 class="tera text-center">Starter Template</h1>
-    <p class="lead text-center">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+    <p class="lead">Persons</p>
+    {% for person in persons %}
+        <p>{{ person.firstname }} {{ person.lastname }}</p>
+    {% endfor %}
 {% endblock %}

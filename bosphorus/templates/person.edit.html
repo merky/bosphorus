@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% import  "macros.html" as macros %}
+
+{% block title %}Edit Person{% endblock %}
+
+{% block body %}
+    <form role="form" class="form-horizontal"
+          action="{{ request.path }}" method="post">
+
+        <div class="row">
+            <div class="col-sm-offset-3 col-sm-5">
+                <p class="lead">Edit Person</p>
+            </div>
+        </div>
+
+        {% set dobfmt = person.dob | format_date %}
+
+        {{ form.csrf_token }}
+        {{ macros.render_field(form.research_id) }}
+        {{ macros.render_field(form.clinical_id, value=person.clinical_id) }}
+        {{ macros.render_field(form.first_name, value=person.first_name) }}
+        {{ macros.render_field(form.last_name, value=person.last_name) }}
+        {{ macros.render_field(form.dob,value=dobfmt, placeholder='mm/dd/yyyy') }}
+        {{ macros.render_field(form.ssn,value=person.ssn, placeholder='xxx-xx-xxxx') }}
+
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-5">
+                <a href="{{ url_for('person.list') }}"><button type="button" class="btn btn-default">Cancel</button></a>
+                <button type="submit" class="btn btn-info">Apply Changes</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

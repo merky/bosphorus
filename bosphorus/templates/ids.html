@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Possible IDs{% endblock %}
+
+{% block body %}
+    <p class="lead">Possible IDs</p>
+    <table class="table table-condensed table-striped">
+        <tr><th class="col-sm-1"></th><th>ID</th></tr>
+    {% for id in ids %}
+        <tr>
+            <td class="text-center">{% if id.used %}<i class="fa fa-check-square"></i>{% endif %}</td>
+            <td>{{ id.research_id }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}

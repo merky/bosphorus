@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% import  "macros.html" as macros %}
+
+{% block title %}Add Person{% endblock %}
+
+{% block body %}
+    <form role="form" class="form-horizontal"
+          action="{{ url_for('person.new') }}" method="post">
+
+        <div class="row">
+            <div class="col-sm-offset-3 col-sm-5">
+                <p class="lead">Add Person</p>
+            </div>
+        </div>
+
+
+        {{ form.csrf_token }}
+        {{ macros.render_field(form.research_id) }}
+        {{ macros.render_field(form.clinical_id) }}
+        {{ macros.render_field(form.first_name) }}
+        {{ macros.render_field(form.last_name) }}
+        {{ macros.render_field(form.dob, placeholder='mm/dd/yyyy') }}
+        {{ macros.render_field(form.ssn, placeholder='xxx-xx-xxxx') }}
+
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-5">
+                <button type="submit" class="btn btn-info">Add Person</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}
