@@ -19,7 +19,7 @@ WORKDIR /bosphorus
 RUN chmod +x manage.py
 
 # add orthancpy
-RUN ln -s -T ../orthancpy orthancpy
+RUN ln -s -T ../orthancpy/orthancpy orthancpy
 
 # make python environment
 RUN pip install virtualenv && \
