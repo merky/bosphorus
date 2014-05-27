@@ -38,10 +38,12 @@ def create_app(object_name, env="prod"):
     # register our blueprints
     from controllers.main import main
     from controllers.user import user
+    from controllers.studies import studies
     from controllers.person import person
     app.register_blueprint(main)
     app.register_blueprint(user)
     app.register_blueprint(person)
+    app.register_blueprint(studies)
 
     return app
 
