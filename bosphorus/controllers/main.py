@@ -1,8 +1,7 @@
-from flask import Blueprint, render_template, flash, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for
 
 from bosphorus import cache
-from bosphorus.models import db, ResearchID, Person
-from orthancpy import Orthanc
+from bosphorus.models import ResearchID
 
 main = Blueprint('main', __name__)
 
