@@ -13,9 +13,13 @@ def index():
 
 @studies.route('/new')
 def new():
+    # new studies received by orthanc
     studies  = orthanc.get_new.studies()
-    clinical_ids = [x[0] for x in db.session.query(Person.clinical_id).all()]
-    matches = [x.id for x in studies if x.patient.patient_id in clinical_ids]
+    # get any persons matching existing research IDs for those studies
+    dicom_patient_ids = [x.patient.patient_id for x in studies]
+    matches = {study.id: Person.query.filter(Person.clinical_id==study.patient.patient_id).first()
+                         for study in studies}
+    # render listing
     return render_template('studies.new.html',studies=studies, matches=matches)
 
 
