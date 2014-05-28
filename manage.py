@@ -3,7 +3,7 @@
 from flask.ext.script import Manager, Server
 from flask.ext.migrate import Migrate, MigrateCommand
 from bosphorus import auto_app
-from bosphorus.models import db, User, ResearchID, Person
+from bosphorus.models import db, User, ResearchID, Person, Study
 
 app = auto_app()
 migrate = Migrate(app, db)
@@ -22,6 +22,7 @@ def make_shell_context():
     return dict(app=app,
                 db=db,
                 Person=Person,
+                Study=Study,
                 ResearchID=ResearchID)
 
 
