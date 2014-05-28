@@ -8,13 +8,22 @@ class User(db.Model):
     email    = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(120))
 
-    def __init__(self, username, password, email=None):
-        self.username = username
-        self.password = password
-        self.email    = email
-
     def __repr__(self):
         return '<User %r>' % self.username
+
+
+class Study(db.Model):
+    """ imaging study (e.g. MRI session) """
+    id = db.Column(db.Integer, primary_key=True)
+
+    # orthanc_id corresponds to study uid within orthanc
+    orthanc_id = db.Column(db.String)
+
+    # relationship to person
+    person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+
+    def __repr__(self):
+        return '<Study %r>' % self.orthanc_id
 
 
 class ResearchID(db.Model):
@@ -23,9 +32,8 @@ class ResearchID(db.Model):
     research_id = db.Column(db.String(120), unique=True)
     used        = db.Column(db.Boolean)
 
-    def __init__(self, research_id, used=False):
-        self.research_id = research_id
-        self.used        = used
+    def __repr__(self):
+        return '<ResearchID %r>' % self.research_id
 
 
 class Person(db.Model):
@@ -37,20 +45,13 @@ class Person(db.Model):
     dob         = db.Column(db.Date)
     ssn         = db.Column(db.String(11))
 
-    def __init__(self, research_id,
-                       clinical_id,
-                       first_name=None,
-                       last_name=None,
-                       dob=None,
-                       ssn=None):
+    # list of all dicom studies
+    studies     = db.relationship("Study", order_by="Study.id", backref="person")
 
-        if research_id is None and clinical_id is None:
-            raise Exception('Unable to create person without research or clinical ID')
+    @property
+    def name(self):
+        return '{} {}'.format(self.first_name, self.last_name)
 
-        self.research_id = research_id
-        self.clinical_id = clinical_id
-        self.first_name  = first_name
-        self.last_name   = last_name
-        self.dob         = dob
-        self.ssn         = ssn
+    def __repr__(self):
+        return '<Person %r>' % self.research_id
 

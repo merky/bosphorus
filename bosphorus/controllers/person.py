@@ -101,7 +101,7 @@ def new():
     # on form submission
     if form.validate_on_submit():
         # create new person
-        person = Person(form.research_id.data, form.clinical_id.data)
+        person = Person(research_id = form.research_id.data, clinical_id = form.clinical_id.data)
         # grab ResearchID
         rid = ResearchID.query.filter(ResearchID.research_id==form.research_id.data).first()
         # populate person data from form
