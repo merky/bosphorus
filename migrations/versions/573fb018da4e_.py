@@ -49,7 +49,8 @@ def upgrade():
     sa.Column('orthanc_id', sa.String(), nullable=True),
     sa.Column('person_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['person_id'], ['person.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('orthanc_id')
     )
     ### end Alembic commands ###
 
