@@ -1,9 +1,13 @@
+import os
+filedir = os.path.abspath(os.path.dirname(__file__))
+
 class Config(object):
     SECRET_KEY = 'secret key'
 
 
 class ProdConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///../database.db'
+    dbpath = os.path.join(filedir,'../database.db')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(dbpath)
 
     CACHE_TYPE = 'simple'
 
@@ -11,7 +15,8 @@ class ProdConfig(Config):
 class DevConfig(Config):
     DEBUG = True
 
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///../database.db'
+    dbpath = os.path.join(filedir,'../database.db')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(dbpath)
     SQLALCHEMY_ECHO = True
 
     CACHE_TYPE = 'null'
