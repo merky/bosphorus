@@ -6,16 +6,21 @@
     <p class="lead">Incoming Studies</p>
 
     <div class="panel-group" id="studies">
+
     {% for study in studies %}
+        {% set person = matches[study.id] %}
+
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
                     <a data-toggle="collapse" data-parent="#studies" href="#{{ study.id}}">
                          {{ study.patient.patient_id }}
                      </a>
-                     {% if study.id in matches %}
-                        <span class="label label-success">ID matches!</span>
+
+                     {% if person %}
+                         <span class="label label-success">{{ person.name }}</span>
                      {% endif %}
+
                      <span class="label label-default">{{ study.series[0].modality }}</span>
                      <span class="pull-right"><strong>{{ study.date | format_date }}</strong></span>
                 </h4>
@@ -32,28 +37,25 @@
 
                     <hr>
 
-                    <ol>
                     {% for scan in study.series %}
-                        <li>
-                    <div class="media">
-                        <span class="pull-left">
-                            {{ scan.number }}
-                        </span>
-                        <a class="pull-left" href="{{ scan.preview }}">
-                            <img class="media-object" 
-                                 src="{{ scan.preview}}"
-                                 alt="{{ scan.description }}"
-                                 width="50" height="50">
-                        </a>
-                        <div class="media-body">
-                            <h4 class="media-heading">{{ scan.description }}</h4>
-                            <strong>sequence:</strong> {{ scan.sequence }}
+
+                        <div class="media">
+                            <span class="pull-left">
+                                {{ scan.number }}
+                            </span>
+                            <a class="pull-left" href="{{ scan.preview }}">
+                                <img class="media-object" 
+                                     src="{{ scan.preview}}"
+                                     alt="{{ scan.description }}"
+                                     width="50" height="50">
+                            </a>
+                            <div class="media-body">
+                                <h4 class="media-heading">{{ scan.description }}</h4>
+                                <strong>sequence:</strong> {{ scan.sequence }}
+                            </div>
                         </div>
-                    </div>
-                        </li>
 
                     {% endfor %}
-                    </ol>
 
                     <!-- / end panel body -->
                 </div>
