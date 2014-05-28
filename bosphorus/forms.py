@@ -2,7 +2,7 @@ from flask_wtf import Form
 from wtforms import TextField, PasswordField, SelectField, DateField
 from wtforms import validators
 
-strip_filter = lambda x: x.strip() if x else None
+strip_filter = lambda x: x.strip() if x else ''
 
 class LoginForm(Form):
     username = TextField(u'username',     validators=[validators.required()])
@@ -23,4 +23,5 @@ class PersonForm(Form):
                             validators = [validators.Optional()],
                             format='%m/%d/%Y')
     ssn         = TextField(u'SSN',
-                             validators = [ssn_validator(), validators.Optional()])
+                             validators = [ssn_validator(), validators.Optional()],
+                             filters = [strip_filter])
