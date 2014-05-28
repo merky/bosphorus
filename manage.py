@@ -25,6 +25,10 @@ def make_shell_context():
                 Study=Study,
                 ResearchID=ResearchID)
 
+@manager.command
+def createdb():
+    """ create db """
+    db.create_all()
 
 @manager.command
 def init_ids(idfile):
@@ -41,7 +45,6 @@ def init_ids(idfile):
         db.session.add(rid)
     db.session.commit()
 
-
 @manager.command
 def init_users():
     admin = User(username='admin',
@@ -49,7 +52,6 @@ def init_users():
                  email   ='user@gmail.com')
     db.session.add(admin)
     db.session.commit()
-
 
 if __name__ == "__main__":
     manager.run()

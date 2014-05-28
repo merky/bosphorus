@@ -31,7 +31,8 @@ RUN pip install virtualenv && \
 VOLUME /data
 
 # set up database
-RUN env/bin/python manage.py initdb fake_names.txt
+RUN env/bin/python manage.py createdb
+RUN env/bin/python manage.py init_ids fake_names.txt
 
 # entrypoint
 ENTRYPOINT ["env/bin/python","manage.py"]
