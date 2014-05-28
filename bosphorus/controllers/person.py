@@ -1,10 +1,13 @@
 from flask import Blueprint, render_template, flash, request, redirect, url_for
 
 from bosphorus import cache
-from bosphorus.models import db, Person, ResearchID
+from bosphorus.models import db, Person, ResearchID, Study
 from bosphorus.forms  import PersonForm
 
 person = Blueprint('person', __name__, url_prefix='/person')
+
+def get_research_id(id):
+    return ResearchID.query.filter(ResearchID.research_id==id).first()
 
 @person.route('/')
 def list():
@@ -13,7 +16,7 @@ def list():
     return render_template('person.list.html',persons=persons)
 
 
-@person.route('/view/<research_id>')
+@person.route('/<research_id>/view')
 def index(research_id):
     """ view individual person """
     # grab person based on ID
@@ -25,11 +28,8 @@ def index(research_id):
     # render page
     return render_template('person.index.html',person=person)
 
-def get_research_id(id):
-    return ResearchID.query.filter(ResearchID.research_id==id).first()
 
-
-@person.route('/edit/<research_id>', methods=['POST','GET'])
+@person.route('/<research_id>/edit', methods=['POST','GET'])
 def edit(research_id):
     """ edit individual person """
     # grab person based on ID
@@ -87,6 +87,7 @@ def edit(research_id):
     # render page
     return render_template('person.edit.html',person=person, form=form)
 
+
 @person.route('/new', methods=['POST','GET'])
 def new():
     """ create new person """
@@ -127,4 +128,31 @@ def new():
 
     # render page
     return render_template('person.new.html', form=form)
+
+
+@person.route('/<research_id>/assign/<orthanc_id>')
+def assign(research_id, orthanc_id):
+    """ assign orthanc study to person """
+    # grab person based on ID
+    person = Person.query.filter(Person.research_id==research_id).first()
+
+    # if they don't exist, redirect to person list page
+    if person is None:
+        flash('Research ID {} not found.', category='warning')
+        return redirect(url_for('person.list'))
+
+    try:
+        study = Study(orthanc_id  = orthanc_id,
+                      person_id   = person.id)
+        db.session.add(study)
+        db.session.commit()
+    except:
+        db.session.rollback()
+        flash('Error assigning study to person')
+    else:
+        flash('Study assigned.')
+
+    # render page
+    return redirect(url_for('person.index',research_id=person.research_id))
+
 
