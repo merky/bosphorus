@@ -28,6 +28,32 @@
                 <td>{{ person.ssn }}</td>
             </tr>
         </table>
+
+        {% if person.studies | length > 0 %}
+
+            <hr>
+            <p class="lead">Imaging Session</p>
+
+            <table class="table table-condensed">
+
+            {% for study in person.orthanc_studies %}
+
+                    <tr>
+                        <th>{{ study.date }}</th>
+                        <td>{{ study.description }}</td>
+                        <td>{{ study.series_count }} scans</td>
+                    </tr>
+
+            {% endfor %}
+
+            </table>
+
+        {% else %}
+
+        <p class="lead">No imaging sessions associated with {{ person.research_id }}</p>
+
+        {% endif %}
+
     </div>
 </div>
 
