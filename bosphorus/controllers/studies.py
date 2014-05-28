@@ -1,10 +1,8 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, flash, url_for, redirect
 
-from bosphorus.models import db, Person
-from orthancpy import Orthanc
+from bosphorus.models import db, orthanc, Person
 
 studies = Blueprint('studies', __name__, url_prefix='/studies')
-orthanc = Orthanc('http://localhost:8042')
 
 @studies.route('/')
 #@cache.cached(timeout=1000)
@@ -21,5 +19,6 @@ def new():
                          for study in studies}
     # render listing
     return render_template('studies.new.html',studies=studies, matches=matches)
+
 
 

@@ -7,7 +7,7 @@ from webassets.loaders import PythonLoader as PythonAssetsLoader
 from flask.ext.cache import Cache
 
 from bosphorus import assets
-from bosphorus.models import db
+from bosphorus.models import db, orthanc
 from bosphorus.utils  import jinja_filters
 
 # Setup flask cache
@@ -15,7 +15,6 @@ cache = Cache()
 
 # init flask assets
 assets_env = Environment()
-
 
 def auto_app():
     env = os.environ.get('BOSPHORUS_ENV', 'dev')
@@ -40,6 +39,9 @@ def create_app(object_name, env="prod"):
 
     #init SQLAlchemy
     db.init_app(app)
+
+    #init Orthanc
+    orthanc.init_app(app)
 
     # Import and register the different asset bundles
     assets_env.init_app(app)

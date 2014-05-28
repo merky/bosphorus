@@ -1,6 +1,10 @@
+# bosphorus database
 from flask.ext.sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
+# include orthanc here; basically 2nd set of models
+from orthancpy import Orthanc
+orthanc = Orthanc()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -17,7 +21,7 @@ class Study(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # orthanc_id corresponds to study uid within orthanc
-    orthanc_id = db.Column(db.String)
+    orthanc_id = db.Column(db.String, unique=True)
 
     # relationship to person
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
@@ -51,6 +55,11 @@ class Person(db.Model):
     @property
     def name(self):
         return '{} {}'.format(self.first_name, self.last_name)
+
+    @property
+    def orthanc_studies(self):
+        """ return orthanc objects of studies """
+        return [orthanc.study(x.orthanc_id) for x in self.studies]
 
     def __repr__(self):
         return '<Person %r>' % self.research_id
