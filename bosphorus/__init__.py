@@ -8,6 +8,7 @@ from flask.ext.cache import Cache
 
 from bosphorus import assets
 from bosphorus.models import db
+from bosphorus.utils  import jinja_filters
 
 # Setup flask cache
 cache = Cache()
@@ -16,12 +17,23 @@ cache = Cache()
 assets_env = Environment()
 
 
+def auto_app():
+    env = os.environ.get('BOSPHORUS_ENV', 'dev')
+    app = create_app('bosphorus.settings.%sConfig' % env.capitalize(), env=env)
+    return app
+
+
 def create_app(object_name, env="prod"):
 
     app = Flask(__name__)
 
+    # set config
     app.config.from_object(object_name)
     app.config['ENV'] = env
+
+    # register all custom jinja filters
+    for f in jinja_filters:
+        app.jinja_env.filters[f[0]] = f[1]
 
     #init the cache
     cache.init_app(app)
@@ -47,10 +59,8 @@ def create_app(object_name, env="prod"):
 
     return app
 
-if __name__ == '__main__':
-    # Import the config for the proper environment using the
-    # shell var APPNAME_ENV
-    env = os.environ.get('BOSPHORUS_ENV', 'prod')
-    app = create_app('bosphorus.settings.%sConfig' % env.capitalize(), env=env)
 
+if __name__ == '__main__':
+    app = auto_app()
     app.run()
+
