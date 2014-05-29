@@ -23,8 +23,21 @@ class Study(db.Model):
     # orthanc_id corresponds to study uid within orthanc
     orthanc_id = db.Column(db.String, unique=True)
 
-    # relationship to person
+    # relationship to person (confirmed)
     person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+    person    = db.relationship("Person",
+                                backref = "studies",
+                                primaryjoin = "Study.person_id==Person.id")
+
+    # potential person match
+    match_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+    match    = db.relationship("Person",
+                                backref = "matches",
+                                primaryjoin = "Study.match_id==Person.id")
+
+    def get(self):
+        """ return orthanc object of study """
+        return orthanc.study(self.orthanc_id)
 
     def __repr__(self):
         return '<Study %r>' % self.orthanc_id
@@ -48,9 +61,6 @@ class Person(db.Model):
     last_name   = db.Column(db.String(120))
     dob         = db.Column(db.Date)
     ssn         = db.Column(db.String(11))
-
-    # list of all dicom studies
-    studies     = db.relationship("Study", order_by="Study.id", backref="person")
 
     @property
     def name(self):
