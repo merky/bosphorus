@@ -9,11 +9,12 @@
 
     <table class="table table-condensed table-striped">
         <tr>
-            <th width="50"></th>
+            <th class="col-sm-1"></th>
             <th>Date</th>
             <th>Description</th>
             <th>#Scans</th>
             <th>Person</th>
+            <th class="col-sm-1"></th>
         </tr>
     {% for study in studies %}
         <tr>
@@ -27,11 +28,19 @@
             {% if study.person_id is not none %}
                 <a href="{{ url_for('person.index', research_id=study.person.research_id)}}">{{ study.person.research_id }}</a>
             {% else %}
-            <a class="btn btn-default btn-sm"
+                <a class="btn btn-default btn-sm"
                    href="{{ url_for('studies.assign', orthanc_id=study.get().id ) }}"
                    role="button"><i class="fa fa-arrow-circle-right"></i> assign</a>
             {% endif %}
             </td>
+            <td>
+            {% if study.person_id is not none %}
+                <a class="btn btn-default btn-sm"
+                   href="{{ url_for('studies.send', orthanc_id=study.get().id ) }}"
+                   role="button"><i class="fa fa-share"></i> send</a>
+            {% endif %}
+
+
         </tr>
     {% endfor %}
     </table>

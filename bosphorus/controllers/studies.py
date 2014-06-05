@@ -122,13 +122,25 @@ def assign(orthanc_id):
 
         # let the person know what's up
         flash('Study assigned successfully!', category='success')
-        return redirect(url_for('studies.list', orthanc_id = orthanc_id))
+        return redirect(url_for('studies.list'))
 
     elif request.method=='POST':
         # problems with form data
         flash('There were some errors with the form.', category='danger')
 
     return render_template('studies.assign.html', form=form)
+
+
+@studies.route('/<orthanc_id>/send')
+def send(orthanc_id,modality="xnat"):
+    """ view details of orthanc study """
+    study = Study.query.filter(Study.orthanc_id==orthanc_id).first()
+    if study is None:
+        flash('Study ID not found', category='danger')
+        redirect(url_for('studies.list'))
+    req = study.send_to(modality=modality)
+    flash(req)
+    return redirect(url_for('studies.list'))
 
 
 @studies.route('/<orthanc_id>/view')
