@@ -1,0 +1,39 @@
+{% extends "studies.base.html" %}
+{% import  "macros.html" as macros %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+    <p>Number of studies found: {{ studies | length }}</p>
+
+    <table class="table table-condensed table-striped">
+        <tr>
+            <th width="50"></th>
+            <th>Date</th>
+            <th>Description</th>
+            <th>#Scans</th>
+            <th>Person</th>
+        </tr>
+    {% for study in studies %}
+        <tr>
+            <td><a href="{{ url_for('studies.view', orthanc_id=study.orthanc_id) }}"
+                   role="button"
+                  class="btn btn-sm btn-default"><i class="fa fa-eye"></i></a></td>
+            <td>{{ study.get().date | format_date }}</td>
+            <td>{{ study.get().description }}</td>
+            <td>{{ study.get().series_count }} scan(s)</td>
+            <td>
+            {% if study.person_id is not none %}
+                <a href="{{ url_for('person.index', research_id=study.person.research_id)}}">{{ study.person.research_id }}</a>
+            {% else %}
+            <a class="btn btn-default btn-sm"
+                   href="{{ url_for('studies.assign', orthanc_id=study.get().id ) }}"
+                   role="button"><i class="fa fa-arrow-circle-right"></i> assign</a>
+            {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Incoming Studies{% endblock %}
+
+{% block body %}
+    <p class="lead">Study: {{ study.get().date | format_date }}</p>
+    <p>Assigned to {{ study.person.research_id | default('No one') }}</p>
+
+
+    <h6>Scans</h6>
+    {% for scan in study.get().series %}
+
+        <div class="media">
+            <span class="pull-left">
+                {{ scan.number }}
+            </span>
+            <a class="pull-left" href="{{ scan.preview }}">
+                <img class="media-object" 
+                     src="{{ scan.preview}}"
+                     alt="{{ scan.description }}"
+                     width="50" height="50">
+            </a>
+            <div class="media-body">
+                <h4 class="media-heading">{{ scan.description }}</h4>
+                <strong>sequence:</strong> {{ scan.sequence }}
+            </div>
+        </div>
+
+    {% endfor %}
+
+{% endblock %}

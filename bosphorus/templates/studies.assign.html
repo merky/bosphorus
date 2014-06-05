@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% import  "macros.html" as macros %}
+
+{% block title %}Assign Study{% endblock %}
+
+{% block body %}
+
+    <form role="form" class="form-horizontal"
+          action="{{ request.path }}" method="post">
+
+        <div class="row">
+            <div class="col-sm-offset-3 col-sm-5">
+                <p class="lead">Assign Study</p>
+            </div>
+        </div>
+
+        {{ form.csrf_token }}
+        {{ macros.render_field(form.research_id) }}
+
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-5">
+                <a href="{{ url_for('studies.list') }}"
+                   role="button"
+                  class="btn btn-default">Cancel</a>
+                <button type="submit" class="btn btn-info">Assign</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

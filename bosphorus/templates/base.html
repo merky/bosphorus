@@ -37,10 +37,8 @@
                 <ul class="nav navbar-nav">
                     {% block nav %}
 
-                        {{ macros.render_nav_item('person.list','Persons') }}
-                        {{ macros.render_nav_item('person.new', 'Add Person') }}
-                        {{ macros.render_nav_item('main.ids', 'IDs') }}
-                        {{ macros.render_nav_item('studies.new', 'Incoming Studies') }}
+                        {{ macros.render_base_nav_item('person.list','Persons') }}
+                        {{ macros.render_base_nav_item('studies.list', 'Studies') }}
 
                     {% endblock %}
                 </ul>

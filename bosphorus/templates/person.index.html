@@ -3,6 +3,12 @@
 {% block title %}Person: {{ person.research_id }} {% endblock %}
 
 {% block body %}
+
+    <ol class="breadcrumb">
+        <li><a href="{{ url_for('person.list') }}">Persons</a></li>
+        <li class="active">{{ person.research_id }}</li>
+    </ol>
+
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="panel-title">{{ person.research_id }}  
@@ -32,16 +38,25 @@
         {% if person.studies | length > 0 %}
 
             <hr>
-            <p class="lead">Imaging Session</p>
+            <p class="lead">Imaging Studies</p>
 
             <table class="table table-condensed">
 
-            {% for study in person.orthanc_studies %}
+            {% for study in person.studies %}
 
                     <tr>
-                        <th>{{ study.date }}</th>
-                        <td>{{ study.description }}</td>
-                        <td>{{ study.series_count }} scans</td>
+                        <td><a href="{{ url_for('studies.view', orthanc_id=study.orthanc_id) }}"
+                               role="button"
+                               class="btn btn-sm btn-default"><i class="fa fa-eye"></i></a>
+                        </td>
+                        <th>{{ study.get().date }}</th>
+                        <td>{{ study.get().description }}</td>
+                        <td>{{ study.get().series_count }} scans</td>
+                        <td width="50">
+                            <a href="{{ url_for('studies.unassign',orthanc_id=study.orthanc_id )}}"
+                               role="button"
+                               class="btn btn-sm btn-danger"><i class="fa fa-times-circle"></i> Unassign</a>
+                        </td>
                     </tr>
 
             {% endfor %}

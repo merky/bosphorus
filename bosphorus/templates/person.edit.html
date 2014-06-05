@@ -4,6 +4,13 @@
 {% block title %}Edit Person{% endblock %}
 
 {% block body %}
+
+    <ol class="breadcrumb">
+        <li><a href="{{ url_for('person.list') }}">Persons</a></li>
+        <li><a href="{{ url_for('person.index', research_id=person.research_id) }}">{{ person.research_id }}</a></li>
+        <li class="active">Edit</a>
+    </ol>
+
     <form role="form" class="form-horizontal"
           action="{{ request.path }}" method="post">
 

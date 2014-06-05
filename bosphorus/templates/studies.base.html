@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% import  "macros.html" as macros %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+
+    <p class="lead">Studies</p>
+
+    <ul class="nav nav-tabs">
+        {{ macros.render_nav_item('studies.unassigned', 'Unassigned') }}
+        {{ macros.render_nav_item('studies.assigned', 'Assigned') }}
+        {{ macros.render_nav_item('studies.list', 'All') }}
+        <li class="pull-right"><a href="{{ url_for('studies.update') }}">check for new studies</a></li>
+    </ul>
+    <br>
+
+    {% block content %}
+    {% endblock %}
+
+{% endblock %}

@@ -1,9 +1,14 @@
 {% extends "base.html" %}
+{% import  "macros.html" as macros %}
 
 {% block title %}Persons{% endblock %}
 
 {% block body %}
-    <p class="lead">Persons</p>
+
+    <ol class="breadcrumb">
+        <li class="active">Persons</li>
+    </ol>
+
     <table class="table table-condensed table-striped">
         <tr>
             <th>Research ID</th>
