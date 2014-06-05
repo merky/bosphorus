@@ -5,9 +5,18 @@
 
 {% block body %}
 
-    <ol class="breadcrumb">
-        <li class="active">Persons</li>
-    </ol>
+    <div class="row">
+        <div class="col-sm-9">
+            <ol class="breadcrumb">
+                <li class="active">Persons</li>
+            </ol>
+        </div>
+        <div class="col-sm-3">
+            <a class="btn btn-sm btn-default pull-right" role="button"
+                href="{{ url_for('person.new') }}">
+            <i class="fa fa-plus-square"></i> <i class="fa fa-user"></i> Add Person</a>
+        </div>
+    </div>
 
     <table class="table table-condensed table-striped">
         <tr>
