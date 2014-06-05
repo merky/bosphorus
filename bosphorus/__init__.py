@@ -4,14 +4,11 @@ import os
 from flask import Flask
 from flask_assets import Environment
 from webassets.loaders import PythonLoader as PythonAssetsLoader
-from flask.ext.cache import Cache
 
 from bosphorus import assets
 from bosphorus.models import db, orthanc
-from bosphorus.utils  import jinja_filters
+from bosphorus.utils  import jinja_filters, cache
 
-# Setup flask cache
-cache = Cache()
 
 # init flask assets
 assets_env = Environment()

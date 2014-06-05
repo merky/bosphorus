@@ -1,3 +1,4 @@
+
 # bosphorus database
 from flask.ext.sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
@@ -5,6 +6,8 @@ db = SQLAlchemy()
 # include orthanc here; basically 2nd set of models
 from orthancpy import Orthanc
 orthanc = Orthanc()
+
+from bosphorus.utils import cache
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -35,6 +38,7 @@ class Study(db.Model):
                                 backref = "matches",
                                 primaryjoin = "Study.match_id==Person.id")
 
+    #@cache.memoize(50)
     def get(self):
         """ return orthanc object of study """
         return orthanc.study(self.orthanc_id)

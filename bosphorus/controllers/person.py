@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, flash, request, redirect, url_for
 
-from bosphorus import cache
 from bosphorus.models import db, Person, ResearchID, Study
 from bosphorus.forms  import PersonForm
 
@@ -130,29 +129,5 @@ def new():
     return render_template('person.new.html', form=form)
 
 
-@person.route('/<research_id>/assign/<orthanc_id>')
-def assign(research_id, orthanc_id):
-    """ assign orthanc study to person """
-    # grab person based on ID
-    person = Person.query.filter(Person.research_id==research_id).first()
-
-    # if they don't exist, redirect to person list page
-    if person is None:
-        flash('Research ID {} not found.', category='warning')
-        return redirect(url_for('person.list'))
-
-    try:
-        study = Study(orthanc_id  = orthanc_id,
-                      person_id   = person.id)
-        db.session.add(study)
-        db.session.commit()
-    except:
-        db.session.rollback()
-        flash('Error assigning study to person')
-    else:
-        flash('Study assigned.')
-
-    # render page
-    return redirect(url_for('person.index',research_id=person.research_id))
 
 

@@ -23,7 +23,7 @@ class DevConfig(Config):
 
     ORTHANC_URI = 'http://localhost:8042'
 
-    CACHE_TYPE = 'null'
+    CACHE_TYPE = 'simple'
 
     # This allows us to test the forms from WTForm
     WTF_CSRF_ENABLED = False
