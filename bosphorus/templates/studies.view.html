@@ -9,14 +9,15 @@
 
     <h6>Scans</h6>
     {% for scan in study.get().series %}
+        {% set img = url_for('proxy.img',instance_id=scan.mid_instance.id) %}
 
         <div class="media">
             <span class="pull-left">
                 {{ scan.number }}
             </span>
-            <a class="pull-left" href="{{ scan.preview }}">
+            <a class="pull-left" href="{{ img }}">
                 <img class="media-object" 
-                     src="{{ scan.preview}}"
+                     src="{{ img }}"
                      alt="{{ scan.description }}"
                      width="50" height="50">
             </a>

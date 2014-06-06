@@ -1,8 +1,9 @@
 from urlparse import urlparse, urljoin
-from flask import request, url_for
+from flask import request, url_for, Response, stream_with_context
+from flask import Blueprint, current_app
 from flask.ext.cache import Cache
 from celery import Celery
-
+import requests
 
 ####################
 # celery (tasks)
@@ -19,6 +20,24 @@ def make_celery(app):
                 return TaskBase.__call__(self, *args, **kwargs)
     celery.Task = ContextTask
     return celery
+
+#####################
+# proxy images
+#####################
+
+proxy = Blueprint('proxy', __name__, url_prefix='/serve')
+
+@proxy.route('/img/<instance_id>')
+def img(instance_id):
+    url = '/'.join([current_app.config['ORTHANC_URI'],
+                   'instances',
+                   instance_id,
+                   'preview'])
+    req = requests.get(url, stream=True)
+    #return Response(url, mimetype='text/xml')
+    return Response(stream_with_context(req.iter_content()),
+                    content_type = req.headers['content-type'])
+
 
 #####################
 # cache
