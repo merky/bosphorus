@@ -14,7 +14,7 @@ from bosphorus.utils  import jinja_filters, cache
 assets_env = Environment()
 
 def auto_app():
-    env = os.environ.get('BOSPHORUS_ENV', 'dev')
+    env = os.environ.get('BOSPHORUS_ENV', 'prod')
     app = create_app('bosphorus.settings.%sConfig' % env.capitalize(), env=env)
     return app
 
