@@ -18,6 +18,8 @@
 <li {% if loc == request.url_rule.endpoint %}class="active"{% endif %}><a href="{{ url_for(loc) }}">{{ title }}</a></li>
 {%- endmacro %}
 
-{% macro render_base_nav_item(loc,title) -%}
-<li {% if url_for(loc) | get_base_url == request.path | get_base_url %}class="active"{% endif %}><a href="{{ url_for(loc) }}">{{ title }}</a></li>
+{% macro render_base_nav_item(loc,title,icon=none) -%}
+<li {% if url_for(loc) | get_base_url == request.path | get_base_url %}class="active"{% endif %}>
+<a href="{{ url_for(loc) }}">{%- if icon %}<i class="fa {{icon}}"></i> {% endif %}{{ title }}</a>
+</li>
 {%- endmacro %}
