@@ -4,13 +4,20 @@ from flask.ext.script import Manager, Server
 from flask.ext.migrate import Migrate, MigrateCommand
 from bosphorus import auto_app
 from bosphorus.models import db, User, ResearchID, Person, Study
+from wsgi import create_cherrypy
 
 app = auto_app()
 migrate = Migrate(app, db)
 
 manager = Manager(app)
-manager.add_command("server", Server(port=80))
+manager.add_command("testserver", Server(port=80))
 manager.add_command("db", MigrateCommand)
+
+
+@manager.command
+def server():
+    """ starts wsgi server """
+    create_cherrypy(app)
 
 
 @manager.shell

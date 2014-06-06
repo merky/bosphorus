@@ -1,26 +1,14 @@
 #! env/bin/python
 
-import os
 import cherrypy
 from cherrypy.process.plugins import Autoreloader
 
-# our app
-from bosphorus import create_app
-
-env = os.environ.get('BOSPHORUS_ENV', 'dev')
-app = create_app('bosphorus.settings.{}Config'.format(env.capitalize()), env=env)
-
-if __name__ == '__main__':
-
+def create_cherrypy(app):
     # Mount the application
     cherrypy.tree.graft(app, "/")
 
     # Unsubscribe the default server
     cherrypy.server.unsubscribe()
-
-    # Autoreload, only for DEBUG
-    if env.lower() == 'dev':
-        Autoreloader(cherrypy.engine).subscribe()
 
     # Instantiate a new server object
     server = cherrypy._cpserver.Server()

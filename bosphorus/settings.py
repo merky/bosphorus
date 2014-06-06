@@ -1,27 +1,35 @@
 import os
+
 filedir = os.path.abspath(os.path.dirname(__file__))
+default_db = os.path.join(filedir, '..', 'bosphorus.db')
+
+DB_LOC  = os.environ.get('DB_LOC', default_db)
+ORTHANC_HOST  = os.environ.get('ORTHANC_HOST', 'localhost')
+REDIS_HOST  = os.environ.get('REDIS_HOST', 'localhost')
 
 class Config(object):
-    SECRET_KEY = 'secret key'
-
+    SECRET_KEY = 'some secret key'
 
 class ProdConfig(Config):
-    dbpath = os.path.join(filedir,'../database.db')
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(dbpath)
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///%s' % DB_LOC
 
-    ORTHANC_URI = 'http://localhost:8042'
+    ORTHANC_URI = 'http://%s:8042' % ORTHANC_HOST
+
+    CELERY_BROKER_URL = 'redis://%s:6379' % REDIS_HOST
+    CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
     CACHE_TYPE = 'simple'
-
 
 class DevConfig(Config):
     DEBUG = True
 
-    dbpath = os.path.join(filedir,'../database.db')
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(dbpath)
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///%s' % DB_LOC
     SQLALCHEMY_ECHO = True
 
-    ORTHANC_URI = 'http://localhost:8042'
+    ORTHANC_URI = 'http://%s:8042' % ORTHANC_HOST
+
+    CELERY_BROKER_URL = 'redis://%s:6379' % REDIS_HOST
+    CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
     CACHE_TYPE = 'simple'
 
