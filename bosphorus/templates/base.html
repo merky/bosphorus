@@ -20,6 +20,11 @@
         {% block css %}
         {% endblock %}
 
+        <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+        <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+        <link rel="apple-touch-icon" sizes="72x72" href="{{ url_for('static', filename='images/favicon.png') }}">
+        <link rel="apple-touch-icon" sizes="114x114" href="{{ url_for('static', filename='images/favicon.png') }}">
+
         <script src="{{ url_for('static', filename='js/vendor/modernizr.min.js') }}"></script>
     </head>
 
