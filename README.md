@@ -28,6 +28,12 @@ pip install -r requirements.txt
 
  * Configure Bosphorus by modifying `bosphorus/settings.py`
 
+## Initialize DB
+```bash
+python manage.py createdb
+python manage.py init_ids fake_names.txt
+```
+
 ## Run
 
 ```bash
