@@ -2,24 +2,14 @@ from urlparse import urlparse, urljoin
 from flask import request, url_for, Response, stream_with_context
 from flask import Blueprint, current_app
 from flask.ext.cache import Cache
-from celery import Celery
 import requests
 
-####################
-# celery (tasks)
-####################
+#####################
+# cache
+#####################
 
-def make_celery(app):
-    celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])
-    celery.conf.update(app.config)
-    TaskBase = celery.Task
-    class ContextTask(TaskBase):
-        abstract = True
-        def __call__(self, *args, **kwargs):
-            with app.app_context():
-                return TaskBase.__call__(self, *args, **kwargs)
-    celery.Task = ContextTask
-    return celery
+cache = Cache()
+
 
 #####################
 # proxy images
@@ -27,6 +17,7 @@ def make_celery(app):
 
 proxy = Blueprint('proxy', __name__, url_prefix='/serve')
 
+@cache.cached(timeout=300)
 @proxy.route('/img/<instance_id>')
 def img(instance_id):
     url = '/'.join([current_app.config['ORTHANC_URI'],
@@ -38,12 +29,6 @@ def img(instance_id):
     return Response(stream_with_context(req.iter_content()),
                     content_type = req.headers['content-type'])
 
-
-#####################
-# cache
-#####################
-
-cache = Cache()
 
 #####################
 # routing helpers
