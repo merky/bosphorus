@@ -43,9 +43,6 @@ class Study(db.Model):
         """ return orthanc object of study """
         return orthanc.study(self.orthanc_id)
 
-    def send_to(self, modality):
-        return self.get().send_to(modality)
-
     def __repr__(self):
         return '<Study %r>' % self.orthanc_id
 
