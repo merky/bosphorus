@@ -1,17 +1,26 @@
 #!env/bin/python
 
+import os
+from flask import render_template
 from flask.ext.script import Manager, Server
 from flask.ext.migrate import Migrate, MigrateCommand
-from bosphorus import auto_app
-from bosphorus.models import db, User, ResearchID, Person, Study
+from bosphorus import create_app
+from bosphorus.models import db, User, ResearchID, Person, Study, orthanc
 from wsgi import create_cherrypy
 
-app = auto_app()
+env = os.environ.get('BOSPHORUS_ENV', 'dev')
+app = create_app('bosphorus.settings', env)
 migrate = Migrate(app, db)
-
 manager = Manager(app)
-manager.add_command("testserver", Server(port=80))
 manager.add_command("db", MigrateCommand)
+manager.add_command("testserver", Server(port=80))
+
+
+@app.before_request
+def check_orthanc(*args, **kwargs):
+    if not orthanc.ready():
+        msg = "It appears there is a problem connecting to Orthanc."
+        return render_template('error.html',message=msg)
 
 
 @manager.command
@@ -25,7 +34,6 @@ def make_shell_context():
     """ Creates a python REPL with several default imports
         in the context of the app
     """
-
     return dict(app=app,
                 db=db,
                 Person=Person,
