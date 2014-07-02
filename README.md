@@ -8,7 +8,7 @@
 
 ## Setup
 
-Note: see [bosphorus-docker](http://github.com/merky/bosphorus-docker) for easy installation using docker containers.
+Note: see [docker-bosphorus](http://github.com/merky/docker-bosphorus) for easy installation using docker containers.
 
 Here's a simplified breakdown of installation:
 
