@@ -2,6 +2,9 @@ import os
 
 DEBUG = True
 
+# secret key
+SECRET_KEY  = os.environ.get('SECRET_KEY', 'the secret key')
+
 # db
 filedir = os.path.abspath(os.path.dirname(__file__))
 default_db = os.path.join(filedir, '..', 'bosphorus.db')
