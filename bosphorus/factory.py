@@ -17,7 +17,7 @@ def create_app(object_name, env='dev'):
     # set config
     app.config.from_object(object_name)
     app.config['ENV'] = env
-    #app.config['DEBUG'] = False if env=="prod" else False
+    app.config['DEBUG'] = False if env=="prod" else True
 
     # register all custom jinja filters
     for f in jinja_filters:
