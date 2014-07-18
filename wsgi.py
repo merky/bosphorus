@@ -1,11 +1,14 @@
 #! env/bin/python
 
+import os
 import cherrypy
 from cherrypy.process.plugins import Autoreloader
 
 def create_cherrypy(app):
+    # Get Mount point
+    mntpoint = os.environ.get("MOUNT_POINT", '/')
     # Mount the application
-    cherrypy.tree.graft(app, "/")
+    cherrypy.tree.graft(app, mntpoint)
 
     # Unsubscribe the default server
     cherrypy.server.unsubscribe()
