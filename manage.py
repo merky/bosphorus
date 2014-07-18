@@ -9,7 +9,7 @@ from bosphorus.models import db, User, ResearchID, Person, Study, orthanc
 from wsgi import create_cherrypy
 
 env = os.environ.get('BOSPHORUS_ENV', 'dev')
-app = create_app('bosphorus.settings', env)
+app = create_app(env=env)
 migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command("db", MigrateCommand)
@@ -43,10 +43,10 @@ def make_shell_context():
 @manager.command
 def createdb():
     """ create db """
-    db.create_all()
+    db.create_all(app=app)
 
 @manager.command
-def init_ids(idfile):
+def init_ids(idfile='fake_names.txt'):
     """ Inserts default values of possible research IDs.
     """
     # read file

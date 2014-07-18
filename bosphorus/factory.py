@@ -10,7 +10,7 @@ from bosphorus.models import db, orthanc
 from bosphorus.utils  import jinja_filters, cache
 
 
-def create_app(object_name, env='dev'):
+def create_app(object_name='bosphorus.settings', env='dev'):
 
     app = Flask(__name__)
 
