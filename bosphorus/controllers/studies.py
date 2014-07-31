@@ -34,7 +34,7 @@ def update():
     studies  = orthanc.get_new.studies()
     for s in studies:
         study_exists = Study.query.filter(Study.orthanc_id==s.id).count()
-        if not study_exists:
+        if study_exists == 0:
             study = Study(orthanc_id = s.id,
                           person_id  = None)
             db.session.add(study)
@@ -128,18 +128,19 @@ def assign(orthanc_id):
         # problems with form data
         flash('There were some errors with the form.', category='danger')
 
-    return render_template('studies.assign.html', form=form)
+    return render_template('studies.assign.html', form=form, orthanc_id=study.orthanc_id)
 
 
 @studies.route('/<orthanc_id>/send')
-def send(orthanc_id,modality="xnat"):
+def send(orthanc_id,modality="XNAT"):
     """ view details of orthanc study """
     study = Study.query.filter(Study.orthanc_id==orthanc_id).first()
     if study is None:
         flash('Study ID not found', category='danger')
         redirect(url_for('studies.list'))
-    req = study.send_to(modality=modality)
-    flash(req)
+    req = study.get().send_to(modality=modality)
+    if req == {}:
+        flash("Study sent to {} successfully!".format(modality), category='success')
     return redirect(url_for('studies.list'))
 
 
