@@ -3,7 +3,6 @@ import os
 from flask import Flask
 from flask_assets import Environment
 from webassets.loaders import PythonLoader as PythonAssetsLoader
-from celery import Celery
 
 from bosphorus import assets
 from bosphorus.models import db, orthanc
@@ -55,6 +54,7 @@ def create_app(object_name='bosphorus.settings', env='dev'):
 
 
 def create_celery_app(app=None):
+    from celery import Celery
     app = app or create_app('bosphorus.settings', env='prod')
     celery = Celery(app.import_name,app.config['CELERY_BROKER_URL'])
     celery.conf.update(app.config)
