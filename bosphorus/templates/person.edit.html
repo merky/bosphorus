@@ -12,7 +12,7 @@
     </ol>
 
     <form role="form" class="form-horizontal"
-          action="{{ request.path }}" method="post">
+          action="{{ url_for('person.edit',research_id=person.research_id) }}" method="post">
 
         <div class="row">
             <div class="col-sm-offset-3 col-sm-5">
