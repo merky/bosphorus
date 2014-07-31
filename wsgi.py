@@ -18,7 +18,7 @@ def create_cherrypy(app):
 
     # Configure the server object
     server.socket_host = "0.0.0.0"
-    server.socket_port = 80
+    server.socket_port = 9999
     server.thread_pool = 30
 
     # For SSL Support
