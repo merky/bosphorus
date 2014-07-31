@@ -42,8 +42,8 @@
                 <ul class="nav navbar-nav">
                     {% block nav %}
 
-                        {{ macros.render_base_nav_item('person.list','Persons', icon='fa-users') }}
-                        {{ macros.render_base_nav_item('studies.list', 'Studies', icon='fa-bar-chart-o') }}
+		{{ macros.render_base_nav_item('person','person.list','Persons',icon='fa-users') }}
+		{{ macros.render_base_nav_item('studies','studies.list','Studies',icon='fa-bar-chart-o') }}
 
                     {% endblock %}
                 </ul>

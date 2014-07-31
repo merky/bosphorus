@@ -59,10 +59,6 @@ def format_date(date, format='%m/%d/%Y'):
     else:
         return ''
 
-def get_base_url(url):
-    return url.split('/')[1]
-
 jinja_filters = [
     ('format_date', format_date),
-    ('get_base_url', get_base_url)
 ]
