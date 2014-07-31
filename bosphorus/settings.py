@@ -1,6 +1,6 @@
 import os
 
-DEBUG = True
+DEBUG = False
 
 # secret key
 SECRET_KEY  = os.environ.get('SECRET_KEY', 'the secret key')
