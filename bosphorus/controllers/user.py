@@ -72,7 +72,7 @@ def delete(username):
         flash('Cannot remove user \'admin\'', 'warning')
     user = User.query.filter_by(username=username).first()
     if user:
-        db.session.remove(user)
+        db.session.delete(user)
         db.session.commit()
         flash('User \'{}\' removed.'.format(username), 'success')
     else:
