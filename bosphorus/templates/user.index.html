@@ -8,17 +8,27 @@
         <li class="active">{{ user.username }}</li>
     </ol>
 	<div class="row">
-        <label for="test" class="col-sm-2 control-label"><strong>Username</strong></label>
-	<div class="col-sm-5"><span id="test">{{ user.username }}</span></div>
+        <label  class="col-sm-2 control-label"><strong>Username</strong></label>
+	<div class="col-sm-5"><span >{{ user.username }}</span> </div>
 	</div>
 	<div class="row">
-        <label for="test" class="col-sm-2 control-label"><strong>Name</strong></label>
-	<div class="col-sm-5"><span id="test">{{ user.name }}</span></div>
+        <label  class="col-sm-2 control-label"><strong>Name</strong></label>
+	<div class="col-sm-5"><span >{{ user.name }}</span></div>
 	</div>
 	<div class="row">
-        <label for="test" class="col-sm-2 control-label"><strong>Email</strong></label>
-	<div class="col-sm-5"><span id="test">{{ user.email }}</span></div>
+        <label  class="col-sm-2 control-label"><strong>Email</strong></label>
+	<div class="col-sm-5"><span >{{ user.email }}</span></div>
 	</div>
+
+        {% if user.is_admin() %}
+	<div class="row">
+	    <div class="col-sm-2"></div>
+	    <div class="col-sm-5">
+                 <span class="label label-success">This user has administrative privileges</span>
+	    </div>
+	</div>
+        {% endif %}
+
 	<hr>
 	<a  role="button" 
            class="btn btn-default"
