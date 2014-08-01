@@ -1,7 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %}User Home{% endblock %}
+{% block title %}Profile: {{user.username}}{% endblock %}
 
 {% block body %}
-<p class="lead">User: {{ user }}</p>
+    <ol class="breadcrumb">
+        <li><a href="{{ url_for('user.list') }}">Users</a></li>
+        <li class="active">{{ user.username }}</li>
+    </ol>
+	<div class="row">
+        <label for="test" class="col-sm-2 control-label"><strong>Username</strong></label>
+	<div class="col-sm-5"><span id="test">{{ user.username }}</span></div>
+	</div>
+	<div class="row">
+        <label for="test" class="col-sm-2 control-label"><strong>Name</strong></label>
+	<div class="col-sm-5"><span id="test">{{ user.name }}</span></div>
+	</div>
+	<div class="row">
+        <label for="test" class="col-sm-2 control-label"><strong>Email</strong></label>
+	<div class="col-sm-5"><span id="test">{{ user.email }}</span></div>
+	</div>
+	<hr>
+	<a  role="button" 
+           class="btn btn-default"
+            href="{{ url_for('user.edit',username=user.username) }}"><i class="fa fa-edit"></i> Modify</a>
 {% endblock %}

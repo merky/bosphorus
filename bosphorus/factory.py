@@ -2,12 +2,15 @@ import os
 
 from flask import Flask
 from flask_assets import Environment
+from flask.ext.login import LoginManager
 from webassets.loaders import PythonLoader as PythonAssetsLoader
 
 from bosphorus import assets
 from bosphorus.models import db, orthanc
 from bosphorus.utils  import jinja_filters, cache
 
+lm = LoginManager()
+lm.login_view = 'user.login'
 
 def create_app(object_name='bosphorus.settings', env='dev'):
 
@@ -30,6 +33,9 @@ def create_app(object_name='bosphorus.settings', env='dev'):
 
     #init Orthanc
     orthanc.init_app(app)
+
+    #init logins
+    lm.init_app(app)
 
     # Import and register the different asset bundles
     assets_env = Environment()

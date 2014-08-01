@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, flash, url_for, redirect, request
+from flask.ext.login import login_required
 
 from bosphorus.models import db, orthanc, Person, Study, ResearchID
 from bosphorus.utils  import get_redirect_target
@@ -27,6 +28,7 @@ def match_unassigned():
 
 
 @studies.route('/update')
+@login_required 
 def update():
     """ check orthanc for new studies and
         add them to the db
@@ -51,26 +53,31 @@ def update():
     return redirect(loc)
 
 @studies.route('/')
+@login_required 
 def index():
     return redirect(url_for('studies.list'))
 
 @studies.route('/all')
+@login_required 
 def list():
     studies = Study.query.all()
     research_ids = [x[0] for x in db.session.query(Person.research_id).all()]
     return render_template('studies.list.html', studies=studies, title="Studies", research_ids=research_ids)
 
 @studies.route('/unassigned')
+@login_required 
 def unassigned():
     studies = Study.query.filter(Study.person_id==None).all()
     return render_template('studies.list.html', studies=studies, title="Unassigned Studies")
 
 @studies.route('/assigned')
+@login_required 
 def assigned():
     studies = Study.query.filter(Study.person_id!=None).all()
     return render_template('studies.list.html', studies=studies, title="Assigned Studies")
 
 @studies.route('/<orthanc_id>/unassign')
+@login_required 
 def unassign(orthanc_id):
     """ action: unassign from person """
     study = Study.query.filter(Study.orthanc_id==orthanc_id).first()
@@ -90,6 +97,7 @@ def unassign(orthanc_id):
 
 
 @studies.route('/<orthanc_id>/assign', methods=['POST','GET'])
+@login_required 
 def assign(orthanc_id):
     """ action: assign to person """
     # get orthanc study
@@ -132,6 +140,7 @@ def assign(orthanc_id):
 
 
 @studies.route('/<orthanc_id>/send')
+@login_required 
 def send(orthanc_id,modality="XNAT"):
     """ view details of orthanc study """
     study = Study.query.filter(Study.orthanc_id==orthanc_id).first()
@@ -145,6 +154,7 @@ def send(orthanc_id,modality="XNAT"):
 
 
 @studies.route('/<orthanc_id>/view')
+@login_required 
 def view(orthanc_id):
     """ view details of orthanc study """
     study = Study.query.filter(Study.orthanc_id==orthanc_id).first()
@@ -155,6 +165,7 @@ def view(orthanc_id):
 
 
 @studies.route('/<orthanc_id>/assign_to/<research_id>')
+@login_required 
 def assign_to_person(orthanc_id, research_id):
     """ action: assign orthanc study to person """
 

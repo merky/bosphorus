@@ -1,7 +1,9 @@
+from functools import wraps
 from urlparse import urlparse, urljoin
-from flask import request, url_for, Response, stream_with_context
+from flask import request, url_for, Response, stream_with_context, redirect
 from flask import Blueprint, current_app
 from flask.ext.cache import Cache
+from flask.ext.login import current_user
 import requests
 
 #####################
@@ -9,6 +11,18 @@ import requests
 #####################
 
 cache = Cache()
+
+#####################
+# decorators
+#####################
+
+def admin_required(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        if not current_user.is_authenticated() or not current_user.is_admin():
+            return redirect(url_for('user.login', next=request.url))
+        return f(*args, **kwargs)
+    return decorator
 
 
 #####################

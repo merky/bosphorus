@@ -41,12 +41,25 @@
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     {% block nav %}
+		    {% if current_user.is_authenticated() %}
 
-		{{ macros.render_base_nav_item('person','person.list','Persons',icon='fa-users') }}
-		{{ macros.render_base_nav_item('studies','studies.list','Studies',icon='fa-bar-chart-o') }}
+			    {{ macros.render_base_nav_item('person','person.list','Persons',icon='fa-users') }}
+			    {{ macros.render_base_nav_item('studies','studies.list','Studies',icon='fa-bar-chart-o') }}
 
+			    {% if  current_user.is_admin() %}
+				{{ macros.render_base_nav_item('user','user.list','Users',icon='fa-user', exceptions=['user.current_home','user.home'] ) }}
+			    {% endif %}
+
+		    {% endif %}
                     {% endblock %}
                 </ul>
+		<ul class="nav navbar-nav pull-right">
+                    {% if current_user.is_authenticated() %}
+			    {{ macros.render_base_nav_item('profile','user.current_home',current_user.username,icon='fa-home') }}
+			    {{ macros.render_base_nav_item('signout','user.logout','Logout',icon='fa-sign-out') }}
+                    {% endif %}
+
+		</ul>
             </div><!--/.nav-collapse -->
         </div>
 

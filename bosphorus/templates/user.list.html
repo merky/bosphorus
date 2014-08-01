@@ -3,8 +3,36 @@
 {% block title %}User List{% endblock %}
 
 {% block body %}
-    <p class="lead">Users</p>
+    <div class="row">
+        <div class="col-sm-9">
+            <ol class="breadcrumb">
+                <li class="active">Users</li>
+            </ol>
+        </div>
+        <div class="col-sm-3">
+            <a class="btn btn-sm btn-default pull-right" role="button"
+                href="{{ url_for('user.add') }}">
+            <i class="fa fa-plus-square"></i> <i class="fa fa-user"></i>Add User</a>
+        </div>
+    </div>
+
+    <table class="table table-condensed table-striped">
+        <tr>
+	    <th>&nbsp;</th>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Email</th>
+        </tr>
+
     {% for user in users %}
-        <p>{{ user.username }} ({{ user.email }})</p>
+        <tr>
+            <td><a href="{{ url_for('user.edit',username=user.username) }}" class="btn btn-default btn-xs" role="button"><i class="fa fa-cog"></i></a></td>
+            <td><a href="{{ url_for('user.home',username=user.username) }}">{{ user.name }}</a></td>
+            <td><a href="{{ url_for('user.home',username=user.username) }}">{{ user.username }}</a></td>
+            <td>{{ user.email }}</td>
+        </tr>
     {% endfor %}
+
+    </table>
+
 {% endblock %}

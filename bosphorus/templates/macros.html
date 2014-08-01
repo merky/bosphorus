@@ -4,7 +4,15 @@
         <label for="{{ field.id }}" class="col-sm-3 control-label">{{ field.label.text }}</label>
     {% endif %}
     <div class="col-sm-5">
-        {{ field(class_='form-control', **kwargs) }}
+	{% if field.type == 'BooleanField' %}
+	   <div class="checkbox">
+	     <label>
+               {{ field(**kwargs) }}
+             </label>
+	   </div>
+	{% else %}
+           {{ field(class_='form-control', **kwargs) }}
+	{% endif %}
     </div>
     {% if field.errors %}
         {% for e in field.errors %}
@@ -18,8 +26,8 @@
 <li {% if loc == request.url_rule.endpoint %}class="active"{% endif %}><a href="{{ url_for(loc) }}">{{ title }}</a></li>
 {%- endmacro %}
 
-{% macro render_base_nav_item(loc,endpoint,title,icon=none) -%}
-<li {% if loc == request.blueprint %}class="active"{% endif %}>
+{% macro render_base_nav_item(loc,endpoint,title,icon=none,class='',exceptions=[]) -%}
+<li class="{{class}} {% if loc == request.blueprint and request.url_rule.endpoint not in exceptions %} active{% endif %}">
 <a href="{{ url_for(endpoint) }}">{%- if icon %}<i class="fa {{icon}}"></i> {% endif %}{{ title }}</a>
 </li>
 {%- endmacro %}

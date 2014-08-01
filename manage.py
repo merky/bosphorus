@@ -5,7 +5,8 @@ from flask import render_template
 from flask.ext.script import Manager, Server
 from flask.ext.migrate import Migrate, MigrateCommand
 from bosphorus import create_app
-from bosphorus.models import db, User, ResearchID, Person, Study, orthanc
+from bosphorus.models import db, User, ResearchID, Person, Study, orthanc, ROLE_ADMIN
+from werkzeug import generate_password_hash
 from wsgi import create_cherrypy
 
 env = os.environ.get('BOSPHORUS_ENV', 'dev')
@@ -41,11 +42,6 @@ def make_shell_context():
                 ResearchID=ResearchID)
 
 @manager.command
-def createdb():
-    """ create db """
-    db.create_all(app=app)
-
-@manager.command
 def init_ids(idfile='fake_names.txt'):
     """ Inserts default values of possible research IDs.
     """
@@ -63,8 +59,9 @@ def init_ids(idfile='fake_names.txt'):
 @manager.command
 def init_users():
     admin = User(username='admin',
-                 password='admin',
-                 email   ='user@gmail.com')
+                 name='Admin Account',
+                 password=generate_password_hash('admin'),
+                 email   ='user@gmail.com', role=ROLE_ADMIN)
     db.session.add(admin)
     db.session.commit()
 

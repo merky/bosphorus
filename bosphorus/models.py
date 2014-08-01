@@ -9,11 +9,34 @@ orthanc = Orthanc()
 
 from bosphorus.utils import cache
 
+ROLE_USER =1
+ROLE_ADMIN=2
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
     email    = db.Column(db.String(120), unique=True)
+    name     = db.Column(db.String(120))
+    role     = db.Column(db.SmallInteger, default = ROLE_USER)
     password = db.Column(db.String(120))
+
+    def is_admin(self):
+        return self.role==ROLE_ADMIN
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return True
+
+    def get_id(self):
+        return unicode(self.id)
+
+    def get_password(self):
+        return self.password
 
     def __repr__(self):
         return '<User %r>' % self.username

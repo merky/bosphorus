@@ -11,35 +11,34 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
-        <div class="panel-title">{{ person.research_id }}  
+        <div class="panel-title"><i class="fa fa-user"></i> {{ person.research_id }}  
             <a class="pull-right" href="{{ url_for('person.edit',research_id=person.research_id) }}">
                 <i class="fa fa-edit"></i> Edit</a></div>
     </div>
     <div class="panel-body">
-        <table class="table table-condensed">
-            <tr>
-                <th>Clinical ID:</th>
-                <td>{{ person.clinical_id }}</td>
-            </tr>
-            <tr>
-                <th>Name:</th>
-                <td>{{ person.first_name }} {{ person.last_name }}</td>
-            </tr>
-            <tr>
-                <th>DOB:</th>
-                <td>{{ person.dob | format_date }}</td>
-            </tr>
-            <tr>
-                <th>SSN:</th>
-                <td>{{ person.ssn }}</td>
-            </tr>
-        </table>
+	<div class="row">
+        <label for="test" class="col-sm-2 control-label"><strong>Clinical ID</strong></label>
+	<div class="col-sm-5"><span id="test">{{ person.clinical_id }}</span></div>
+	</div>
+	<div class="row">
+        <label for="test" class="col-sm-2 control-label"><strong>Name</strong></label>
+	<div class="col-sm-5"><span id="test">{{ person.first_name }} {{ person.last_name }}</span></div>
+	</div>
+	<div class="row">
+        <label for="test" class="col-sm-2 control-label"><strong>Date of Birth</strong></label>
+	<div class="col-sm-5"><span id="test">{{ person.dob | format_date }}</span></div>
+	</div>
+	<div class="row">
+        <label for="test" class="col-sm-2 control-label"><strong>SSN</strong></label>
+	<div class="col-sm-5"><span id="test">{{ person.ssn }}</span></div>
+	</div>
+    </div>
 
+    <div class="panel-heading">
+        <div class="panel-title"><i class="fa fa-bar-chart-o"></i> Imaging Sessions for {{ person.research_id }}</div>
+    </div>
+    <div class="panel-body">
         {% if person.studies | length > 0 %}
-
-            <hr>
-            <p class="lead">Imaging Studies</p>
-
             <table class="table table-condensed">
 
             {% for study in person.studies %}
@@ -52,11 +51,14 @@
                         <th>{{ study.get().date }}</th>
                         <td>{{ study.get().description }}</td>
                         <td>{{ study.get().series_count }} scans</td>
+			
+			{% if current_user.is_admin() %}
                         <td width="50">
                             <a href="{{ url_for('studies.unassign',orthanc_id=study.orthanc_id )}}"
                                role="button"
                                class="btn btn-sm btn-danger"><i class="fa fa-times-circle"></i> Unassign</a>
                         </td>
+			{% endif %}
                     </tr>
 
             {% endfor %}
@@ -64,12 +66,10 @@
             </table>
 
         {% else %}
-
-        <p class="lead">No imaging sessions associated with {{ person.research_id }}</p>
-
+		<p>No imaging sessions available.</p>
         {% endif %}
-
     </div>
+
 </div>
 
 {% endblock %}

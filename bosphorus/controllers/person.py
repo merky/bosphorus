@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, flash, request, redirect, url_for
+from flask.ext.login import login_required
 
 from bosphorus.models import db, Person, ResearchID, Study
 from bosphorus.forms  import PersonForm
@@ -9,6 +10,7 @@ def get_research_id(id):
     return ResearchID.query.filter(ResearchID.research_id==id).first()
 
 @person.route('/')
+@login_required 
 def list():
     """ show list of all persons """
     persons = Person.query.all()
@@ -16,6 +18,7 @@ def list():
 
 
 @person.route('/<research_id>/view')
+@login_required 
 def index(research_id):
     """ view individual person """
     # grab person based on ID
@@ -29,6 +32,7 @@ def index(research_id):
 
 
 @person.route('/<research_id>/edit', methods=['POST','GET'])
+@login_required 
 def edit(research_id):
     """ edit individual person """
     # grab person based on ID
@@ -88,6 +92,7 @@ def edit(research_id):
 
 
 @person.route('/new', methods=['POST','GET'])
+@login_required 
 def new():
     """ create new person """
     # get all available choices for research ID

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% import  "macros.html" as macros %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block body %}
+    <form role="form" class="form-horizontal"
+          action="{{ url_for('user.edit',username=user.username) }}" method="post">
+
+        <div class="row">
+            <div class="col-sm-offset-3 col-sm-5">
+                <p class="lead">Edit User</p>
+            </div>
+        </div>
+
+	{% set is_admin_value = 'yes' if user.is_admin() else 'no' %}
+	{% set disable_field = {'readonly':True} if user.username=='admin' else {} %}
+	{% set disable_check = {'disabled':True} if user.username=='admin' else {} %}
+
+        {{ form.csrf_token }}
+        {{ macros.render_field(form.name, value=user.name, **disable_field) }}
+        {{ macros.render_field(form.username, value=user.username, **disable_field) }}
+        {{ macros.render_field(form.email, value=user.email) }}
+        {{ macros.render_field(form.password, value=user.get_password()) }}
+        {{ macros.render_field(form.confirm, value=user.get_password()) }}
+	{% if user.is_admin() %}
+	    {{ macros.render_field(form.role_admin, value='y', checked=is_admin_value, **disable_check) }}
+	{% else %}
+	    {{ macros.render_field(form.role_admin, value='y') }}
+	{% endif %}
+
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-5">
+                <button type="submit" class="btn btn-info"><i class="fa fa-save"></i> Save</button>
+		<a href="{{ request.referrer }}" role="button" class="btn btn-default">Cancel</a>
+		<a href="{{ url_for('user.delete', username=user.username) }}" role="button" class="btn btn-danger pull-right"><i class="fa fa-times"></i> Delete User</a>
+            </div>
+        </div>
+    </form>
+{% endblock %}

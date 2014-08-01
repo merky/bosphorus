@@ -1,2 +1,2 @@
 
-from .factory import create_app
+from .factory import create_app, lm
