@@ -26,7 +26,7 @@
 
     {% for user in users %}
         <tr>
-            <td><a href="{{ url_for('user.edit',username=user.username) }}" class="btn btn-default btn-xs" role="button"><i class="fa fa-cog"></i></a></td>
+            <td><a href="{{ url_for('user.edit',username=user.username) }}" class="btn btn-default btn-xs" role="button"><i class="fa fa-edit"></i></a></td>
             <td><a href="{{ url_for('user.home',username=user.username) }}">{{ user.name }}</a> 
 
 		{% if user.is_admin() %}
