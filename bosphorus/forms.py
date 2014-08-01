@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import TextField, PasswordField, SelectField, DateField, BooleanField
+from wtforms import TextField, PasswordField, SelectField, DateField, BooleanField, TextAreaField
 from wtforms.validators import Regexp, Required, Email, Optional, EqualTo
 
 strip_filter = lambda x: x.strip() if x else ''
@@ -51,3 +51,7 @@ class PersonForm(Form):
     ssn         = TextField(u'SSN',
                              validators = [ssn_validator(), Optional()],
                              filters = [strip_filter])
+    notes       = TextAreaField(u'Notes', 
+                             validators = [Optional()],
+                             filters = [strip_filter])
+

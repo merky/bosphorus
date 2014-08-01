@@ -17,20 +17,24 @@
     </div>
     <div class="panel-body">
 	<div class="row">
-        <label for="test" class="col-sm-2 control-label"><strong>Clinical ID</strong></label>
-	<div class="col-sm-5"><span id="test">{{ person.clinical_id }}</span></div>
+        <label  class="col-sm-2 control-label"><strong>Clinical ID</strong></label>
+	<div class="col-sm-5"><span >{{ person.clinical_id }}</span></div>
 	</div>
 	<div class="row">
-        <label for="test" class="col-sm-2 control-label"><strong>Name</strong></label>
-	<div class="col-sm-5"><span id="test">{{ person.first_name }} {{ person.last_name }}</span></div>
+        <label  class="col-sm-2 control-label"><strong>Name</strong></label>
+	<div class="col-sm-5"><span >{{ person.first_name }} {{ person.last_name }}</span></div>
 	</div>
 	<div class="row">
-        <label for="test" class="col-sm-2 control-label"><strong>Date of Birth</strong></label>
-	<div class="col-sm-5"><span id="test">{{ person.dob | format_date }}</span></div>
+        <label  class="col-sm-2 control-label"><strong>Date of Birth</strong></label>
+	<div class="col-sm-5"><span >{{ person.dob | format_date }}</span></div>
 	</div>
 	<div class="row">
-        <label for="test" class="col-sm-2 control-label"><strong>SSN</strong></label>
-	<div class="col-sm-5"><span id="test">{{ person.ssn }}</span></div>
+        <label  class="col-sm-2 control-label"><strong>SSN</strong></label>
+	<div class="col-sm-5"><span >{{ person.ssn }}</span></div>
+	</div>
+	<div class="row">
+        <label  class="col-sm-2 control-label"><strong>Notes</strong></label>
+	<div class="col-sm-5"><span >{{ person.notes if person.notes else '' }}</span></div>
 	</div>
     </div>
 

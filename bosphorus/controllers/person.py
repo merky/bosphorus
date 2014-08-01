@@ -86,6 +86,8 @@ def edit(research_id):
     elif request.method=='POST':
         # problems with form data
         flash('There were some errors with the form.', category='danger')
+    else:
+        form.notes.data=person.notes
 
     # render page
     return render_template('person.edit.html',person=person, form=form)

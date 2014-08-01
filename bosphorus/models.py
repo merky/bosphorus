@@ -88,6 +88,7 @@ class Person(db.Model):
     last_name   = db.Column(db.String(120))
     dob         = db.Column(db.Date)
     ssn         = db.Column(db.String(11))
+    notes       = db.Column(db.String(256))
 
     @property
     def name(self):
