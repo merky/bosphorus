@@ -33,7 +33,11 @@
             <div class="col-sm-offset-3 col-sm-5">
                 <button type="submit" class="btn btn-info"><i class="fa fa-save"></i> Save</button>
 		<a href="{{ request.referrer }}" role="button" class="btn btn-default">Cancel</a>
-		<a href="{{ url_for('user.delete', username=user.username) }}" role="button" class="btn btn-danger pull-right"><i class="fa fa-times"></i> Delete User</a>
+		{% if not user.is_admin() %}
+			<a href="{{ url_for('user.delete', username=user.username) }}" 
+                           role="button" 
+                          class="btn btn-danger pull-right"><i class="fa fa-times"></i> Delete User</a>
+		{% endif %}
             </div>
         </div>
     </form>
