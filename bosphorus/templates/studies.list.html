@@ -14,7 +14,8 @@
             <th>Description</th>
             <th>#Scans</th>
             <th>Person</th>
-            <th class="col-sm-1"></th>
+            <th>Status</th>
+            <th class="col-sm-1">Action</th>
         </tr>
     {% for study in studies %}
         <tr>
@@ -23,8 +24,9 @@
                   class="btn btn-sm btn-default"><i class="fa fa-eye"></i></a></td>
             <td>{{ study.get().date | format_date }}</td>
             <td>{{ study.get().description }}</td>
-            <td>{{ study.get().series_count }} scan(s)</td>
+            <td>{{ study.get().series_count }}</td>
             <td>
+
             {% if study.person_id is not none %}
                 <a href="{{ url_for('person.index', research_id=study.person.research_id)}}">{{ study.person.research_id }}</a>
             {% else %}
@@ -32,15 +34,24 @@
                    href="{{ url_for('studies.assign', orthanc_id=study.get().id ) }}"
                    role="button"><i class="fa fa-arrow-circle-right"></i> assign</a>
             {% endif %}
+
             </td>
             <td>
+               {% if study.history | length != 0 %}
+                   {% set history = study.history | last %}
+                   {{history.action }} to 
+                   <div class="badge">{{ history.modality }}</div> on {{ history.datetime.date() }}<br>
+               {% endif %}
+
+            <td>
+
             {% if study.person_id is not none %}
                 <a class="btn btn-default btn-sm"
                    href="{{ url_for('studies.send', orthanc_id=study.get().id ) }}"
-                   role="button"><i class="fa fa-share"></i> send</a>
+                   role="button"><i class="fa fa-share"></i> send to XNAT</a>
             {% endif %}
-
-
+            
+            </td>
         </tr>
     {% endfor %}
     </table>

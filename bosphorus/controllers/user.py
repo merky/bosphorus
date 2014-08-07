@@ -102,11 +102,14 @@ def add():
             user.role = ROLE_ADMIN
 
         # Insert the record in our database and commit it
-        db.session.add(user)
-        db.session.commit()
+        try:
+            db.session.add(user)
+            db.session.commit()
+            flash('User added successfully!')
+        except:
+            db.session.rollback()
+            flash('Unable to add user.', 'danger')
 
-        # flash will display a message to the user
-        flash('User added successfully!')
         # redirect user to the 'home' method of the user module.
         return redirect(url_for('user.list'))
     return render_template("user.add.html", form=form)
@@ -139,11 +142,16 @@ def edit(username):
         if form.role_admin.data:
             user.role = ROLE_ADMIN
         # Insert the record in our database and commit it
-        db.session.add(user)
-        db.session.commit()
+        try:
+            db.session.add(user)
+            db.session.commit()
+            flash('User edited successfully!')
+        except:
+            db.session.rollback()
+            flash('Unable to edit user', 'danger')
 
-        # flash will display a message to the user
-        flash('User edited successfully!')
         # redirect user to the 'home' method of the user module.
         return redirect(url_for('user.home', username=user.username))
+
     return render_template("user.edit.html", form=form, user=user)
+

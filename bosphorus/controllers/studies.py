@@ -1,30 +1,23 @@
 from flask import Blueprint, render_template, flash, url_for, redirect, request
-from flask.ext.login import login_required
+from flask.ext.login import login_required, current_user
+from sqlalchemy import or_
 
-from bosphorus.models import db, orthanc, Person, Study, ResearchID
+from bosphorus.models import db, orthanc, Person, Study, ResearchID, StudyHistory
 from bosphorus.utils  import get_redirect_target
 from bosphorus.forms  import StudyAssignForm
+from bosphorus.tasks  import update_studies, match_unassigned, send_study
 
 studies = Blueprint('studies', __name__, url_prefix='/studies')
 
+###############################################
+# Study Routes
+###############################################
 
-def match_unassigned():
-    """ this matches people with unassigned studies based
-        on dicom header info, e.g. patient_id
-    """
-    studies  = Study.query.filter(Study.person==None).all()
-    # get any persons matching existing research IDs for those studies
-    orthanc_studies = [x.get().patient.patient_id for x in studies]
-
-    for study in studies:
-        match = Person.query.filter(Person.clinical_id==study.get().patient.patient_id).first()
-        if match is None: continue
-        study.match = match
-
-    try:
-        db.session.commit()
-    except:
-        pass
+@studies.route('/match')
+@login_required
+def match():
+    match_unassigned.delay()
+    return redirect(get_redirect_target() or url_for('main.home'))
 
 
 @studies.route('/update')
@@ -33,56 +26,58 @@ def update():
     """ check orthanc for new studies and
         add them to the db
     """
-    studies  = orthanc.get_new.studies()
-    for s in studies:
-        study_exists = Study.query.filter(Study.orthanc_id==s.id).count()
-        if study_exists == 0:
-            study = Study(orthanc_id = s.id,
-                          person_id  = None)
-            db.session.add(study)
-    try:
-        db.session.commit()
-    except:
-        pass
+    update_studies.delay()
+    return redirect(get_redirect_target() or url_for('main.home'))
 
-    match_unassigned()
-
-    loc = get_redirect_target()
-    if loc is None:
-        return redirect(url_for('main.home'))
-    return redirect(loc)
 
 @studies.route('/')
 @login_required 
 def index():
-    return redirect(url_for('studies.list'))
+    return redirect(url_for('studies.action_required'))
+
+
+@studies.route('/unsent')
+@login_required 
+def unsent():
+    studies = [s for s in Study.query.all() if s.exists and not s.sent]
+    return render_template('studies.list.html', studies=studies, title="Studies Not Sent")
+
+
+@studies.route('/action-required')
+@login_required 
+def action_required():
+    studies = [s for s in Study.query.filter(or_(Study.history==None,Study.person_id==None)).all() if s.exists]
+    return render_template('studies.list.html', studies=studies, title="Studies That Require Action")
+
 
 @studies.route('/all')
 @login_required 
 def list():
-    studies = Study.query.all()
-    research_ids = [x[0] for x in db.session.query(Person.research_id).all()]
-    return render_template('studies.list.html', studies=studies, title="Studies", research_ids=research_ids)
+    studies = [s for s in Study.query.all() if s.exists]
+    return render_template('studies.list.html', studies=studies, title="All Studies")
+
 
 @studies.route('/unassigned')
 @login_required 
 def unassigned():
-    studies = Study.query.filter(Study.person_id==None).all()
+    studies = [s for s in Study.query.filter(Study.person_id==None).filter(Study.exists==True).all() if s.exists]
     return render_template('studies.list.html', studies=studies, title="Unassigned Studies")
+
 
 @studies.route('/assigned')
 @login_required 
 def assigned():
-    studies = Study.query.filter(Study.person_id!=None).all()
+    studies = Study.query.filter(Study.person_id!=None).filter(Study.exists==True).all()
     return render_template('studies.list.html', studies=studies, title="Assigned Studies")
+
 
 @studies.route('/<orthanc_id>/unassign')
 @login_required 
 def unassign(orthanc_id):
     """ action: unassign from person """
-    study = Study.query.filter(Study.orthanc_id==orthanc_id).first()
+    study = Study.query.filter(Study.orthanc_id==orthanc_id).filter(Study.exists==True).first()
     if study is None:
-        flash('No study found with specified ID', category='danger')
+        flash('No study found with specified ID', 'danger')
         return redirect(url_for('studies.list'))
 
     study.person_id = None
@@ -91,8 +86,8 @@ def unassign(orthanc_id):
     db.session.merge(study)
     db.session.commit()
 
-    # let the person know what's up
-    flash('Study unassigned successfully!', category='success')
+    # let the user know what's up
+    flash('Study unassigned successfully!', 'success')
     return redirect(request.referrer or url_for('studies.list'))
 
 
@@ -101,9 +96,9 @@ def unassign(orthanc_id):
 def assign(orthanc_id):
     """ action: assign to person """
     # get orthanc study
-    study = Study.query.filter(Study.orthanc_id==orthanc_id).first()
+    study = Study.query.filter(Study.orthanc_id==orthanc_id).filter(Study.exists==True).first()
     if study is None:
-        flash('No study found with specified ID', category='danger')
+        flash('No study found with specified ID', 'danger')
         return redirect(url_for('studies.list'))
 
     # get all available choices for research ID
@@ -119,7 +114,7 @@ def assign(orthanc_id):
         # grab person
         person = Person.query.filter(Person.research_id==form.research_id.data).first()
         if person is None:
-            flash('No person found with specified ID. Study not assigned', category='danger')
+            flash('No person found with specified ID. Study not assigned', 'danger')
             return redirect(url_for('studies.list', orthanc_id=orthanc_id))
 
         study.person = person
@@ -129,12 +124,12 @@ def assign(orthanc_id):
         db.session.commit()
 
         # let the person know what's up
-        flash('Study assigned successfully!', category='success')
+        flash('Study assigned successfully!', 'success')
         return redirect(url_for('studies.list'))
 
     elif request.method=='POST':
         # problems with form data
-        flash('There were some errors with the form.', category='danger')
+        flash('There were some errors with the form.', 'danger')
 
     return render_template('studies.assign.html', form=form, orthanc_id=study.orthanc_id)
 
@@ -143,13 +138,15 @@ def assign(orthanc_id):
 @login_required 
 def send(orthanc_id,modality="XNAT"):
     """ view details of orthanc study """
-    study = Study.query.filter(Study.orthanc_id==orthanc_id).first()
-    if study is None:
-        flash('Study ID not found', category='danger')
-        redirect(url_for('studies.list'))
-    req = study.get().send_to(modality=modality)
-    if req == {}:
-        flash("Study sent to {} successfully!".format(modality), category='success')
+    study_id = db.session.query(Study.id).filter(Study.orthanc_id==orthanc_id).first()[0]
+    if not study_id:
+        flash('Study ID not found', 'danger')
+    elif modality not in orthanc.modalities:
+        flash('Modality \"{}\" not found.'.format(modality), 'danger')
+    else:
+        send_study.delay(study_id, modality, current_user.id)
+        flash("Study will be sent to {} shortly...".format(modality), 'success')
+
     return redirect(url_for('studies.list'))
 
 
@@ -157,9 +154,9 @@ def send(orthanc_id,modality="XNAT"):
 @login_required 
 def view(orthanc_id):
     """ view details of orthanc study """
-    study = Study.query.filter(Study.orthanc_id==orthanc_id).first()
+    study = Study.query.filter(Study.orthanc_id==orthanc_id).filter(Study.exists==True).first()
     if study is None:
-        flash('Study ID not found', category='danger')
+        flash('Study ID not found', 'danger')
         redirect(url_for('studies.list'))
     return render_template('studies.view.html',study=study)
 
@@ -174,7 +171,7 @@ def assign_to_person(orthanc_id, research_id):
 
     # if they don't exist, redirect to person list page
     if person is None:
-        flash('Research ID {} not found.', category='warning')
+        flash('Research ID {} not found.', 'warning')
         return redirect(url_for('studies.list'))
 
     try:
@@ -184,9 +181,9 @@ def assign_to_person(orthanc_id, research_id):
         db.session.commit()
     except:
         db.session.rollback()
-        flash('Error assigning study to person', category='danger')
+        flash('Error assigning study to person', 'danger')
     else:
-        flash('Study assigned.', category='success')
+        flash('Study assigned.', 'success')
 
     # render page
     return redirect(url_for('studies.view', orthanc_id=orthanc_id))

@@ -5,13 +5,19 @@
 
 {% block body %}
 
-    <p class="lead">Studies</p>
+    <div class="row">
+        <div class="col-sm-12">
+            <ol class="breadcrumb">
+                <li class="active">Studies</li>
+            </ol>
+        </div>
+    </div>
 
     <ul class="nav nav-tabs">
+        {{ macros.render_nav_item('studies.action_required', 'Action Required') }}
+        {{ macros.render_nav_item('studies.unsent', 'Unsent') }}
         {{ macros.render_nav_item('studies.unassigned', 'Unassigned') }}
-        {{ macros.render_nav_item('studies.assigned', 'Assigned') }}
         {{ macros.render_nav_item('studies.list', 'All') }}
-        <li class="pull-right"><a href="{{ url_for('studies.update') }}">check for new studies</a></li>
     </ul>
     <br>
 

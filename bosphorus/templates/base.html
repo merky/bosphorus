@@ -44,7 +44,7 @@
 		    {% if current_user.is_authenticated() %}
 
                        {{ macros.render_base_nav_item('person','person.list','Persons',icon='fa-users') }}
-                       {{ macros.render_base_nav_item('studies','studies.list','Studies',icon='fa-bar-chart-o') }}
+                       {{ macros.render_base_nav_item('studies','studies.index','Studies',icon='fa-bar-chart-o') }}
                        
                        {% if  current_user.is_admin() %}
                          {{ macros.render_base_nav_item('user','user.list','Users',icon='fa-user', exceptions=['user.current_home'] ) }}

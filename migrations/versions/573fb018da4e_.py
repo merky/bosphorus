@@ -46,7 +46,7 @@ def upgrade():
     )
     op.create_table('study',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('orthanc_id', sa.String(), nullable=True),
+    sa.Column('orthanc_id', sa.String(length=120), nullable=True),
     sa.Column('person_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['person_id'], ['person.id'], ),
     sa.PrimaryKeyConstraint('id'),

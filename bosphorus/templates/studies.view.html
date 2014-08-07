@@ -1,32 +1,89 @@
 {% extends "base.html" %}
 
-{% block title %}Incoming Studies{% endblock %}
+{% block title %}Study{% endblock %}
 
 {% block body %}
-    <p class="lead">Study: {{ study.get().date | format_date }}</p>
-    <p>Assigned to {{ study.person.research_id | default('No one') }}</p>
+<div class="panel panel-default"> 
+    <div class="panel-heading clearfix">
+        <div class="panel-title"><strong>Study: {{ study.get().date | format_date if study.get().date else '' }}</strong>
+           <div class="pull-right">
 
+	   {% if study.person %}
+             Assigned to
+             <a href="{{ url_for('person.index',research_id=study.person.research_id) }}">{{ study.person.research_id }}</a>
+           {% else %}
+	     <a class="btn btn-primary btn-sm"
+	         href="{{ url_for('studies.assign', orthanc_id=study.get().id ) }}"
+		 role="button"><i class="fa fa-arrow-circle-right"></i> assign</a>
+	   {% endif %}
 
-    <h6>Scans</h6>
+           </div>
+        </div>
+    </div>
+    <div class="panel-body">
+        <p>Below is information provided by the DICOM file(s):</p>
+	<div class="row">
+          <label  class="col-sm-2 control-label"><strong>Patient ID</strong></label>
+	  <div class="col-sm-10"><span >{{ study.get().patient.patient_id }}</span></div>
+	</div>
+	<div class="row">
+          <label  class="col-sm-2 control-label"><strong>Patient Sex</strong></label>
+	  <div class="col-sm-10"><span >{{ study.get().patient.sex }}</span></div>
+	</div>
+	<div class="row">
+          <label  class="col-sm-2 control-label"><strong>Patient DOB</strong></label>
+	  <div class="col-sm-10"><span >{{ study.get().patient.dob }}</span></div>
+	</div>
+    </div>
+
+    <table class="table table-condensed">
+        <tr>
+
+        {% if request.args.get('show_images') %}
+            <th></th>
+        {% endif %}
+
+            <th class="col-sm-1">#</th>
+            <th class="col-sm-1">Modality</th>
+            <th class="col-sm-6">Sequence</th>
+            <th class="col-sm-3">Description</th>
+        </tr>
+        <tr class="info">
+          <td colspan='5'>
+        {% if not request.args.get('show_images') %}
+	    <a href="{{ request.base_url }}?show_images=true">show images</a>
+	{% else %}
+	    <a href="{{ request.base_url }}">hide images</a>
+        {% endif %}
+            for scans
+	  </td>
+        </tr>
+
     {% for scan in study.get().series %}
         {% set img = url_for('proxy.img',instance_id=scan.mid_instance.id) %}
 
-        <div class="media">
-            <span class="pull-left">
-                {{ scan.number }}
-            </span>
-            <a class="pull-left" href="{{ img }}">
-                <img class="media-object" 
-                     src="{{ img }}"
-                     alt="{{ scan.description }}"
-                     width="50" height="50">
-            </a>
-            <div class="media-body">
-                <h4 class="media-heading">{{ scan.description }}</h4>
-                <strong>sequence:</strong> {{ scan.sequence }}
-            </div>
-        </div>
+	<tr>
+
+        {% if request.args.get('show_images') %}
+	    <td>
+		    <a class="pull-left" href="{{ img }}">
+		    <img class="img-rounded" 
+			 src="{{ img }}"
+			 alt="{{ scan.description }}"
+			 width="50" height="50">
+		    </a>
+            </td>
+	{% endif %}
+
+	    <td>{{ scan.number }}</td>
+            <td>{{ scan.modality }}</td>
+            <td>{{ scan.description }}</td>
+            <td>{{ scan.sequence }}</td>
+        </tr>
 
     {% endfor %}
+
+    </table>
+</div>
 
 {% endblock %}
