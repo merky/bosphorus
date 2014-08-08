@@ -10,7 +10,7 @@ from bosphorus.tasks  import update_studies, match_unassigned, send_study
 studies = Blueprint('studies', __name__, url_prefix='/studies')
 
 ###############################################
-# Study Routes
+# Generic Study Actions
 ###############################################
 
 @studies.route('/match')
@@ -29,6 +29,10 @@ def update():
     update_studies.delay()
     return redirect(get_redirect_target() or url_for('main.home'))
 
+
+######################
+# Study Lists
+######################
 
 @studies.route('/')
 @login_required 
@@ -71,6 +75,10 @@ def assigned():
     return render_template('studies.list.html', studies=studies, title="Assigned Studies")
 
 
+######################
+# Study Actions
+######################
+
 @studies.route('/<orthanc_id>/unassign')
 @login_required 
 def unassign(orthanc_id):
@@ -78,7 +86,7 @@ def unassign(orthanc_id):
     study = Study.query.filter(Study.orthanc_id==orthanc_id).filter(Study.exists==True).first()
     if study is None:
         flash('No study found with specified ID', 'danger')
-        return redirect(url_for('studies.list'))
+        return redirect(request.referrer or url_for('studies.index'))
 
     study.person_id = None
 
@@ -88,7 +96,7 @@ def unassign(orthanc_id):
 
     # let the user know what's up
     flash('Study unassigned successfully!', 'success')
-    return redirect(request.referrer or url_for('studies.list'))
+    return redirect(request.referrer or url_for('studies.index'))
 
 
 @studies.route('/<orthanc_id>/assign', methods=['POST','GET'])
@@ -99,7 +107,7 @@ def assign(orthanc_id):
     study = Study.query.filter(Study.orthanc_id==orthanc_id).filter(Study.exists==True).first()
     if study is None:
         flash('No study found with specified ID', 'danger')
-        return redirect(url_for('studies.list'))
+        return redirect(request.referrer or url_for('studies.index'))
 
     # get all available choices for research ID
     research_ids = ResearchID.query.filter(ResearchID.used==True).all()
@@ -115,7 +123,7 @@ def assign(orthanc_id):
         person = Person.query.filter(Person.research_id==form.research_id.data).first()
         if person is None:
             flash('No person found with specified ID. Study not assigned', 'danger')
-            return redirect(url_for('studies.list', orthanc_id=orthanc_id))
+            return redirect(request.referrer or url_for('studies.view', orthanc_id=orthanc_id))
 
         study.person = person
 
@@ -125,7 +133,7 @@ def assign(orthanc_id):
 
         # let the person know what's up
         flash('Study assigned successfully!', 'success')
-        return redirect(url_for('studies.list'))
+        return redirect(url_for('studies.index'))
 
     elif request.method=='POST':
         # problems with form data
@@ -147,7 +155,7 @@ def send(orthanc_id,modality="XNAT"):
         send_study.delay(study_id, modality, current_user.id)
         flash("Study will be sent to {} shortly...".format(modality), 'success')
 
-    return redirect(url_for('studies.list'))
+    return redirect(request.referrer or url_for('studies.index'))
 
 
 @studies.route('/<orthanc_id>/view')
@@ -157,7 +165,7 @@ def view(orthanc_id):
     study = Study.query.filter(Study.orthanc_id==orthanc_id).filter(Study.exists==True).first()
     if study is None:
         flash('Study ID not found', 'danger')
-        redirect(url_for('studies.list'))
+        redirect(request.referrer or url_for('studies.index'))
     return render_template('studies.view.html',study=study)
 
 
@@ -172,7 +180,7 @@ def assign_to_person(orthanc_id, research_id):
     # if they don't exist, redirect to person list page
     if person is None:
         flash('Research ID {} not found.', 'warning')
-        return redirect(url_for('studies.list'))
+        return redirect(request.referrer or url_for('studies.index'))
 
     try:
         study = Study(orthanc_id  = orthanc_id,
