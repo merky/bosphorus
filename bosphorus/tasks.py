@@ -1,5 +1,6 @@
 from celery import Celery
 from celery.signals   import task_postrun
+from celery.task.sets import subtask
 from flask.globals    import current_app
 from flask.ext.login  import current_user
 from sqlalchemy import or_
@@ -44,6 +45,7 @@ def match_unassigned():
     """ this matches people with unassigned studies based
         on dicom header info, e.g. patient_id
     """
+    current_app.logger.info("Matching unassigned!")
     # get all studies
     studies  = Study.query.filter(Study.person==None).all()
 
@@ -66,6 +68,7 @@ def match_unassigned():
 
 @celery.task(name='task.update_studies')
 def update_studies():
+    current_app.logger.info("Updating studies!")
     studies  = orthanc.get_new.studies()
     for s in studies:
         if s.is_anonymized: continue 
@@ -80,7 +83,7 @@ def update_studies():
     try:
         db.session.commit()
         orthanc.reset_changes()
-        match_unassigned.delay()
+        subtask('task.match_unassigned').delay()
     except:
         db.session.rollback()
 
