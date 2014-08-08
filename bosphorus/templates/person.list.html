@@ -6,17 +6,35 @@
 {% block body %}
 
     <div class="row">
-        <div class="col-sm-9">
+        <div class="col-sm-7">
             <ol class="breadcrumb">
                 <li class="active">Persons</li>
             </ol>
         </div>
         <div class="col-sm-3">
+            <form role="form" action="{{ url_for('person.search') }}" method='POST'>
+		{{ searchform.csrf_token }}
+		    <div class="input-group">
+		      <input type="text" id="search" name="search" class="form-control" value="{{ query if query else ''}}">
+		      <span class="input-group-btn">
+			<button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+		      </span>
+		    </div>
+            </form>
+        </div>
+        <div class="col-sm-2">
             <a class="btn btn-sm btn-info pull-right" role="button"
                 href="{{ url_for('person.new') }}">
             <i class="fa fa-plus-square"></i> Add Person</a>
         </div>
     </div>
+
+    {% if query %}
+        <p class="lead">Results for "{{ query }}"&nbsp;
+           <a href="{{ url_for('person.list') }}" role="button" class="btn btn-sm btn-default">
+           Clear</a>
+        </p>
+    {% endif %}
 
     <table class="table table-condensed table-striped">
         <tr>

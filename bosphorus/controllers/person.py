@@ -1,21 +1,58 @@
 from flask import Blueprint, render_template, flash, request, redirect, url_for
 from flask.ext.login import login_required
+from sqlalchemy import or_
 
 from bosphorus.models import db, Person, ResearchID, Study
-from bosphorus.forms  import PersonForm
+from bosphorus.forms  import PersonForm, PersonSearchForm
 
 person = Blueprint('person', __name__, url_prefix='/person')
 
 def get_research_id(id):
     return ResearchID.query.filter(ResearchID.research_id==id).first()
 
+########################
+# List all persons
+########################
+
 @person.route('/')
 @login_required 
 def list():
     """ show list of all persons """
+    form = PersonSearchForm(request.form)
     persons = Person.query.all()
-    return render_template('person.list.html',persons=persons)
+    return render_template('person.list.html',persons=persons, searchform=form)
 
+########################
+# Search persons
+########################
+
+@person.route('/search', methods=['POST'])
+@login_required 
+def search():
+    form = PersonSearchForm(request.form)
+    if not form.validate_on_submit():
+        flash('Query not valid','warning')
+        return redirect(url_for('person.list'))
+    return redirect(url_for('person.search_results', query = form.search.data))
+
+@person.route('/search/<query>', methods=['GET'])
+@login_required 
+def search_results(query):
+    """ search persons """
+    form = PersonSearchForm(request.form)
+    querystr = '%{}%'.format(query)
+    persons = Person.query.filter(or_(
+                  Person.research_id.like(querystr),
+                  Person.clinical_id.like(querystr),
+                  Person.first_name.like(querystr),
+                  Person.last_name.like(querystr)
+              )).all()
+    return render_template('person.list.html', persons=persons, query=query, searchform=form)
+
+
+########################
+# View Person
+########################
 
 @person.route('/<research_id>/view')
 @login_required 
@@ -30,6 +67,9 @@ def index(research_id):
     # render page
     return render_template('person.index.html',person=person)
 
+########################
+# Edit Person
+########################
 
 @person.route('/<research_id>/edit', methods=['POST','GET'])
 @login_required 
@@ -92,6 +132,9 @@ def edit(research_id):
     # render page
     return render_template('person.edit.html',person=person, form=form)
 
+########################
+# New Person
+########################
 
 @person.route('/new', methods=['POST','GET'])
 @login_required 

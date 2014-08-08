@@ -37,6 +37,9 @@ class StudyAssignForm(Form):
     research_id = SelectField(u'Research ID',
                                validators=[Required()])
 
+class PersonSearchForm(Form):
+    search = TextField(u'Search', validators=[Required()])
+
 class PersonForm(Form):
     research_id = SelectField(u'Research ID',
                                validators=[Required()])
