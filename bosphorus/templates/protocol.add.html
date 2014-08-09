@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% import  "macros.html" as macros %}
+
+{% block title %}Add Protocol{% endblock %}
+
+{% block body %}
+
+    <form role="form" class="form-horizontal"
+          action="{{ url_for('protocol.add') }}" method="post">
+
+        <div class="row">
+            <div class="col-sm-offset-3 col-sm-5">
+                <p class="lead">Add Protocol</p>
+            </div>
+        </div>
+
+        {{ form.csrf_token }}
+        {{ macros.render_field(form.number) }}
+        {{ macros.render_field(form.title) }}
+        {{ macros.render_field(form.description) }}
+
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-5">
+                <a href="{{ request.referrer }}" role="button" class="btn btn-default">Cancel</a>
+                <button type="submit" class="btn btn-info">Add</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

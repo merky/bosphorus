@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% import  "macros.html" as macros %}
+
+{% block title %}Add Protocol{% endblock %}
+
+{% block body %}
+
+    <form role="form" class="form-horizontal"
+          action="{{ url_for('protocol.edit',protocol_id=protocol.id) }}" method="post">
+
+        <div class="row">
+            <div class="col-sm-offset-3 col-sm-5">
+                <p class="lead">Add Protocol</p>
+            </div>
+        </div>
+
+        {{ form.csrf_token }}
+        {{ macros.render_field(form.number, value=protocol.number) }}
+        {{ macros.render_field(form.title, value=protocol.title) }}
+        {{ macros.render_field(form.description, value=protocol.description) }}
+
+        <div class="form-group">
+            <div class="col-sm-offset-3 col-sm-5">
+                <a href="{{ request.referrer }}" role="button" class="btn btn-default">Cancel</a>
+                <button type="submit" class="btn btn-info">Add</button>
+	    {% if current_user.is_admin() %}
+                <div class="pull-right">
+	       <a href="{{ url_for('protocol.delete',protocol_id=protocol.id )}}"
+		  role="button"
+		  class="btn btn-danger"><i class="fa fa-times-circle"></i> Delete Protocol</a>
+                </div>
+	    {% endif %}
+            </div>
+
+
+        </div>
+    </form>
+{% endblock %}

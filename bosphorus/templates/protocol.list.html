@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% import  "macros.html" as macros %}
+
+{% block title %}Protocols{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="col-sm-9">
+            <ol class="breadcrumb">
+                <li class="active">Protocols</li>
+            </ol>
+        </div>
+        <div class="col-sm-3">
+            <a class="btn btn-info pull-right" role="button"
+                href="{{ url_for('protocol.add') }}">
+            <i class="fa fa-plus-square"></i> Add Protocol</a>
+        </div>
+    </div>
+
+    <table class="table table-condensed table-striped">
+        <tr>
+            <th></th>
+            <th>Protocol #</th>
+            <th>Title</th>
+            <th>Description</th>
+        </tr>
+    {% for protocol in protocols %}
+        <tr>
+            <td><a href="{{ url_for('protocol.edit', protocol_id=protocol.id)}}"><i class="fa fa-edit"></i> Edit</a>
+            <td>{{ protocol.number }}</a></td>
+            <td>{{ protocol.title }}</td>
+            <td>{{ protocol.description }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock %}

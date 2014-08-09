@@ -33,6 +33,14 @@
 	<div class="col-sm-5"><span >{{ person.ssn }}</span></div>
 	</div>
 	<div class="row">
+          <label  class="col-sm-2 control-label"><strong>Protocol</strong></label>
+	  <div class="col-sm-5">
+              {% for p in person.protocols %}
+                  <span class="badge info">{{ p.number }}</span>
+              {% endfor %}
+          </div>
+	</div>
+	<div class="row">
         <label  class="col-sm-2 control-label"><strong>Notes</strong></label>
 	<div class="col-sm-5"><span >{{ person.notes if person.notes else '' }}</span></div>
 	</div>
@@ -75,5 +83,11 @@
     </div>
 
 </div>
+
+    {% if current_user.is_admin() %}
+       <a href="{{ url_for('person.delete',research_id=person.research_id )}}"
+          role="button"
+          class="btn btn-sm btn-danger"><i class="fa fa-times-circle"></i> Delete Person</a>
+    {% endif %}
 
 {% endblock %}

@@ -2,9 +2,9 @@ from flask import Blueprint, render_template, flash, url_for, redirect, request
 from flask.ext.login import login_required, current_user
 from sqlalchemy import or_
 
-from bosphorus.models import db, orthanc, Person, Study, ResearchID, StudyHistory
-from bosphorus.utils  import get_redirect_target
-from bosphorus.forms  import StudyAssignForm
+from bosphorus.models import db, orthanc, Person, Study, ResearchID, StudyHistory, ResearchProtocol
+from bosphorus.utils  import get_redirect_target, admin_required
+from bosphorus.forms  import StudyAssignForm, ResearchProtocolForm
 from bosphorus.tasks  import update_studies, match_unassigned, send_study
 
 studies = Blueprint('studies', __name__, url_prefix='/studies')
@@ -28,6 +28,8 @@ def update():
     """
     update_studies.delay()
     return redirect(get_redirect_target() or url_for('main.home'))
+
+
 
 
 ######################
@@ -167,6 +169,29 @@ def view(orthanc_id):
         flash('Study ID not found', 'danger')
         redirect(request.referrer or url_for('studies.index'))
     return render_template('studies.view.html',study=study)
+
+
+@studies.route('/<orthanc_id>/delete')
+@login_required 
+@admin_required
+def delete(orthanc_id):
+    """ delete study """
+    study = Study.query.filter(Study.orthanc_id==orthanc_id).first()
+    if study is None:
+        flash('Study ID not found', 'danger')
+        redirect(request.referrer)
+    
+    try:
+        study.get().delete()
+        db.session.delete(study)
+        db.session.commit()
+        flash('Successfully deleted study!', 'success')
+    except:
+        flash('Error deleting study', 'danger')
+        db.session.rollback()
+        redirect(request.referrer)
+
+    return redirect(url_for('studies.list'))
 
 
 @studies.route('/<orthanc_id>/assign_to/<research_id>')

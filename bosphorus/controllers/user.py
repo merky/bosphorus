@@ -64,7 +64,7 @@ def login():
     return render_template('user.login.html', form=form)
 
 # delete user
-@user.route('<username>/delete', methods=['GET', 'POST'])
+@user.route('<username>/delete', methods=['GET'])
 @login_required 
 @admin_required
 def delete(username):

@@ -1,5 +1,5 @@
 from flask_wtf import Form
-from wtforms import TextField, PasswordField, SelectField, DateField, BooleanField, TextAreaField
+from wtforms import TextField, PasswordField, SelectField, DateField, BooleanField, TextAreaField, SelectMultipleField
 from wtforms.validators import Regexp, Required, Email, Optional, EqualTo
 
 strip_filter = lambda x: x.strip() if x else ''
@@ -40,6 +40,13 @@ class StudyAssignForm(Form):
 class PersonSearchForm(Form):
     search = TextField(u'Search', validators=[Required()])
 
+class ResearchProtocolForm(Form):
+    number = TextField(u'Protocol #',
+                               validators=[Required()],
+                               filters=[strip_filter])
+    title  = TextField(u'Title', filters = [strip_filter])
+    description  = TextField(u'Description',filters=[strip_filter])
+
 class PersonForm(Form):
     research_id = SelectField(u'Research ID',
                                validators=[Required()])
@@ -54,6 +61,9 @@ class PersonForm(Form):
     ssn         = TextField(u'SSN',
                              validators = [ssn_validator(), Optional()],
                              filters = [strip_filter])
+    protocols   = SelectMultipleField(u'Protocols',
+				       coerce=int,
+				       validators=[Required()])
     notes       = TextAreaField(u'Notes', 
                              validators = [Optional()],
                              filters = [strip_filter])

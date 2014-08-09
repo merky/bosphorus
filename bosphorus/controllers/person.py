@@ -2,8 +2,9 @@ from flask import Blueprint, render_template, flash, request, redirect, url_for
 from flask.ext.login import login_required
 from sqlalchemy import or_
 
-from bosphorus.models import db, Person, ResearchID, Study
+from bosphorus.models import db, Person, ResearchID, Study, ResearchProtocol
 from bosphorus.forms  import PersonForm, PersonSearchForm
+from bosphorus.utils  import admin_required
 
 person = Blueprint('person', __name__, url_prefix='/person')
 
@@ -83,12 +84,17 @@ def edit(research_id):
 
     # get all available choices for research ID (include current)
     research_ids = ResearchID.query.filter(ResearchID.used==False).all()
-    choices = [(x.research_id,x.research_id) for x in research_ids]
-    choices.insert(0,(person.research_id,person.research_id))
+    id_choices = [(x.research_id,x.research_id) for x in research_ids]
+    id_choices.insert(0,(person.research_id,person.research_id))
 
+    # get all available choices for research protocol
+    protocols = ResearchProtocol.query.all()
+    protocol_choices = [(x.id,'{} - {}'.format(x.number, x.title)) for x in protocols]
+    
     # apply choices to form
-    form = PersonForm(request.form)
-    form.research_id.choices = choices
+    form = PersonForm(request.form, protocols=[x.id for x in person.protocols])
+    form.research_id.choices = id_choices
+    form.protocols.choices = protocol_choices
 
     # on form submission
     if form.validate_on_submit():
@@ -113,7 +119,17 @@ def edit(research_id):
             db.session.merge(old_rid)
 
         # populate person data from form
-        form.populate_obj(person)
+        #form.populate_obj(person)
+        #person.research_id = form.research_id.data
+        person.clinical_id = form.clinical_id.data
+        person.first_name  = form.first_name.data
+        person.last_name   = form.last_name.data
+        person.dob         = form.dob.data
+        person.ssn         = form.ssn.data
+        person.notes       = form.notes.data
+
+        person.protocols   = [ResearchProtocol.query.get(x) for x in form.protocols.data]
+
         # add to session
         db.session.merge(person)
         # commit changes
@@ -140,13 +156,18 @@ def edit(research_id):
 @login_required 
 def new():
     """ create new person """
-    # get all available choices for research ID
+    # get all available choices for research ID (include current)
     research_ids = ResearchID.query.filter(ResearchID.used==False).all()
     id_choices = [(x.research_id,x.research_id) for x in research_ids]
 
+    # get all available choices for research protocol
+    protocols = ResearchProtocol.query.all()
+    protocol_choices = [(x.id,'{} - {}'.format(x.number, x.title)) for x in protocols]
+    
     # apply choices to form
     form = PersonForm(request.form)
     form.research_id.choices = id_choices
+    form.protocols.choices = protocol_choices
 
     # on form submission
     if form.validate_on_submit():
@@ -155,7 +176,14 @@ def new():
         # grab ResearchID
         rid = ResearchID.query.filter(ResearchID.research_id==form.research_id.data).first()
         # populate person data from form
-        form.populate_obj(person)
+        person.clinical_id = form.clinical_id.data
+        person.first_name  = form.first_name.data
+        person.last_name   = form.last_name.data
+        person.dob         = form.dob.data
+        person.ssn         = form.ssn.data
+        person.notes       = form.notes.data
+
+        person.protocols   = [ResearchProtocol.query.get(x) for x in form.protocols.data]
         # add to session
         db.session.add(person)
         # mark the Research ID as being used
@@ -179,5 +207,23 @@ def new():
     return render_template('person.new.html', form=form)
 
 
+@person.route('/<research_id>/delete', methods=['GET'])
+@login_required 
+@admin_required
+def delete(research_id):
+    """ edit individual person """
+    # grab person based on ID
+    person = Person.query.filter(Person.research_id==research_id).first()
+
+    # if they don't exist, redirect to person list page
+    if person is not None: 
+        rid = get_research_id(person.research_id)
+        rid.used = False
+        db.session.delete(person)
+        db.session.merge(rid)
+        db.session.commit()
+        flash('Person "{}" removed successfully'.format(person.research_id), 'success')
+
+    return redirect(url_for('person.list'))
 
 

@@ -48,6 +48,7 @@
                        
                        {% if  current_user.is_admin() %}
                          {{ macros.render_base_nav_item('user','user.list','Users',icon='fa-user', exceptions=['user.current_home'] ) }}
+                         {{ macros.render_base_nav_item('protocol','protocol.list','Protocols',icon='fa-file') }}
                        {% endif %}
    
 		    {% endif %}

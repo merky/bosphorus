@@ -86,4 +86,10 @@
     </table>
 </div>
 
+    {% if current_user.is_admin() %}
+       <a href="{{ url_for('studies.delete',orthanc_id=study.orthanc_id )}}"
+          role="button"
+          class="btn btn-danger"><i class="fa fa-times-circle"></i> Delete Study</a>
+    {% endif %}
+
 {% endblock %}

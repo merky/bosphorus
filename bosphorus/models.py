@@ -3,6 +3,7 @@ from datetime import datetime
 
 # bosphorus database
 from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy import Table
 db = SQLAlchemy()
 
 # include orthanc here; basically 2nd set of models
@@ -99,15 +100,11 @@ class Study(db.Model):
         return '<Study %r>' % self.orthanc_id
 
 
-class ResearchID(db.Model):
-    """ List of all possible research IDs """
-    id = db.Column(db.Integer, primary_key=True)
-    research_id = db.Column(db.String(120), unique=True)
-    used        = db.Column(db.Boolean)
-
-    def __repr__(self):
-        return '<ResearchID %r>' % self.research_id
-
+person_protocol_association = db.Table('research_protocols',
+    db.Column('person_id', db.Integer, db.ForeignKey('person.id')),
+    db.Column('protocol_id', db.Integer, db.ForeignKey('research_protocol.id'))
+)
+   
 
 class Person(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -118,6 +115,11 @@ class Person(db.Model):
     dob         = db.Column(db.Date)
     ssn         = db.Column(db.String(11))
     notes       = db.Column(db.String(1024))
+
+    protocols    = db.relationship("ResearchProtocol",
+                                   secondary = person_protocol_association,
+                                   backref = db.backref('persons', 
+                                                lazy='dynamic'))
 
     @property
     def name(self):
@@ -130,4 +132,27 @@ class Person(db.Model):
 
     def __repr__(self):
         return '<Person %r>' % self.research_id
+
+
+class ResearchID(db.Model):
+    """ List of all possible research IDs """
+    id = db.Column(db.Integer, primary_key=True)
+    research_id = db.Column(db.String(120), unique=True)
+    used        = db.Column(db.Boolean)
+
+    def __repr__(self):
+        return '<ResearchID %r>' % self.research_id
+
+
+
+class ResearchProtocol(db.Model):
+    """ List of all protocol numbers """
+    id = db.Column(db.Integer, primary_key=True)
+    number      = db.Column(db.String(120), unique=True)
+    title       = db.Column(db.String(120))
+    description = db.Column(db.String(120))
+
+    def __repr__(self):
+        return '<ResearchProtocol %r>' % self.number
+
 

@@ -7,6 +7,7 @@
         <li><a href="{{ url_for('user.list') }}">Users</a></li>
         <li class="active">{{ user.username }}</li>
     </ol>
+
 	<div class="row">
         <label  class="col-sm-2 control-label"><strong>Username</strong></label>
 	<div class="col-sm-5"><span >{{ user.username }}</span> </div>
@@ -30,7 +31,18 @@
         {% endif %}
 
 	<hr>
-	<a  role="button" 
-           class="btn btn-default"
+
+        <div class="row">
+           <div class="col-sm-9">
+	   <a role="button" class="btn btn-default"
             href="{{ url_for('user.edit',username=user.username) }}"><i class="fa fa-edit"></i> Modify</a>
+           </div>
+           
+               <div class="col-sm-3">
+	       <a href="{{ url_for('user.delete',username=user.username )}}"
+		  role="button"
+		  class="btn btn-danger"><i class="fa fa-times-circle"></i> Delete User</a>
+               </div>
+
+        </div>
 {% endblock %}

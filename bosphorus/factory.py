@@ -59,11 +59,13 @@ def create_app(object_name='bosphorus.settings', env='dev'):
     from controllers.user import user
     from controllers.studies import studies
     from controllers.person import person
+    from controllers.protocol import protocol
     from utils import proxy
     app.register_blueprint(main)
     app.register_blueprint(user)
     app.register_blueprint(person)
     app.register_blueprint(studies)
+    app.register_blueprint(protocol)
     app.register_blueprint(proxy)
 
     return app
