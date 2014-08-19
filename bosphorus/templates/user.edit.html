@@ -13,9 +13,20 @@
             </div>
         </div>
 
-	{% set is_admin_value = 'yes' if user.is_admin() else 'no' %}
 	{% set disable_field = {'readonly':True} if user.username=='admin' else {} %}
-	{% set disable_check = {'disabled':True} if user.username=='admin' else {} %}
+
+        {% if current_user.is_admin() %}
+           {% if user.username=='admin' %}
+              {% set check_values={'checked':'yes','disabled':True} %}
+           {% elif user.is_admin() %}
+              {% set check_values={'checked':'yes'} %}
+           {% else %}
+              {% set check_values={} %}
+           {% endif %}
+        {% else %}
+           {% set check_values={'disabled':True} %}
+        {% endif %}
+           
 
         {{ form.csrf_token }}
         {{ macros.render_field(form.name, value=user.name, **disable_field) }}
@@ -23,17 +34,13 @@
         {{ macros.render_field(form.email, value=user.email) }}
         {{ macros.render_field(form.password, value=user.get_password()) }}
         {{ macros.render_field(form.confirm, value=user.get_password()) }}
-	{% if user.is_admin() %}
-	    {{ macros.render_field(form.role_admin, value='y', checked=is_admin_value, **disable_check) }}
-	{% else %}
-	    {{ macros.render_field(form.role_admin, value='y') }}
-	{% endif %}
+	{{ macros.render_field(form.role_admin, value='y', **check_values) }}
 
         <div class="form-group">
             <div class="col-sm-offset-3 col-sm-5">
                 <button type="submit" class="btn btn-info"><i class="fa fa-save"></i> Save</button>
 		<a href="{{ request.referrer }}" role="button" class="btn btn-default">Cancel</a>
-		{% if not user.is_admin() %}
+		{% if not current_user.is_admin() %}
 			<a href="{{ url_for('user.delete', username=user.username) }}" 
                            role="button" 
                           class="btn btn-danger pull-right"><i class="fa fa-times"></i> Delete User</a>

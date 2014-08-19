@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, flash, request, redirect, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from werkzeug import check_password_hash, generate_password_hash
 
-from bosphorus.models import db, User, ROLE_ADMIN
+from bosphorus.models import db, User, ROLE_ADMIN, ROLE_USER
 from bosphorus.forms import LoginForm, RegisterForm, EditUserForm
 from bosphorus.utils import admin_required
 from bosphorus import lm
@@ -139,8 +139,7 @@ def edit(username):
         user.email=form.email.data.lower()
         if len(form.password.data):
             user.password=generate_password_hash(form.password.data)
-        if form.role_admin.data:
-            user.role = ROLE_ADMIN
+        user.role = ROLE_ADMIN if form.role_admin.data else ROLE_USER
         # Insert the record in our database and commit it
         try:
             db.session.add(user)
