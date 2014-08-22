@@ -13,7 +13,11 @@
             <th>#Scans</th>
             <th>Person</th>
             <th>Status</th>
+            
+           {% if current_user.can_edit() %}
             <th class="col-sm-1">Action</th>
+           {% endif %}
+
         </tr>
     {% for study in studies %}
         <tr>
@@ -27,10 +31,12 @@
 
             {% if study.person_id is not none %}
                 <a href="{{ url_for('person.index', research_id=study.person.research_id)}}">{{ study.person.research_id }}</a>
-            {% else %}
+            {% elif current_user.can_edit() %}
                 <a class="btn btn-default btn-sm"
                    href="{{ url_for('studies.assign', orthanc_id=study.get().id ) }}"
                    role="button"><i class="fa fa-arrow-circle-right"></i> assign</a>
+            {% else %}
+                Unassigned
             {% endif %}
 
             </td>
@@ -41,15 +47,18 @@
                    <div class="badge">{{ history.modality }}</div> on {{ history.datetime.date() }}<br>
                {% endif %}
 
-            <td>
+           {% if current_user.can_edit() %}
+              <td>
+  
+              {% if study.person_id is not none %}
+                  <a class="btn btn-default btn-sm"
+                     href="{{ url_for('studies.send', orthanc_id=study.get().id ) }}"
+                     role="button"><i class="fa fa-share"></i> send to XNAT</a>
+              {% endif %}
+              
+              </td>
+           {% endif %}
 
-            {% if study.person_id is not none %}
-                <a class="btn btn-default btn-sm"
-                   href="{{ url_for('studies.send', orthanc_id=study.get().id ) }}"
-                   role="button"><i class="fa fa-share"></i> send to XNAT</a>
-            {% endif %}
-            
-            </td>
         </tr>
     {% endfor %}
     </table>

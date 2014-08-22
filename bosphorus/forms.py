@@ -1,6 +1,9 @@
 from flask_wtf import Form
-from wtforms import TextField, PasswordField, SelectField, DateField, BooleanField, TextAreaField, SelectMultipleField
+from wtforms import (TextField, PasswordField, SelectField, 
+                     DateField, BooleanField, TextAreaField, 
+                     RadioField, SelectMultipleField)
 from wtforms.validators import Regexp, Required, Email, Optional, EqualTo
+from bosphorus.models import ROLE_USER, ROLE_READONLY, ROLE_ADMIN
 
 strip_filter = lambda x: x.strip() if x else ''
 
@@ -16,7 +19,12 @@ class RegisterForm(Form):
     email = TextField('Email address', [Required()])
     username = TextField('Username', [Required()])
     password = PasswordField('Password', [Required()])
-    role_admin = BooleanField('Administrator', [Optional()])
+    role = RadioField('Role',
+                      [Required()],
+                      choices = [(ROLE_READONLY,'Read only'),
+                                 (ROLE_USER,    'User'),
+                                 (ROLE_ADMIN,   'Admin')],
+                      coerce = int)
     confirm = PasswordField('Repeat Password', [
                  Required(),
                  EqualTo('password', message='Passwords must match')
@@ -26,8 +34,13 @@ class EditUserForm(Form):
     name = TextField('Name', [Required()])
     email = TextField('Email address', [Required()])
     username = TextField('Username', [Required()])
+    role = RadioField('Role',
+                      [Required()],
+                      choices = [(ROLE_READONLY,'Read only'),
+                                 (ROLE_USER,    'User'),
+                                 (ROLE_ADMIN,   'Admin')],
+                      coerce = int)
     password = PasswordField('Password', [Optional()])
-    role_admin = BooleanField('Administrator', [Optional()])
     confirm = PasswordField('Repeat Password', [
                  Optional(),
                  EqualTo('password', message='Passwords must match')

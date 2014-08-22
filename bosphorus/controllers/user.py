@@ -96,10 +96,8 @@ def add():
         user = User(name=form.name.data, 
                     username=form.username.data.lower(),
                     email=form.email.data.lower(),
-                    password=generate_password_hash(form.password.data))
-        
-        if form.role_admin.data:
-            user.role = ROLE_ADMIN
+                    password=generate_password_hash(form.password.data),
+                    role=form.role.data)
 
         # Insert the record in our database and commit it
         try:
@@ -125,7 +123,7 @@ def edit(username):
     if not user: 
         return redirect(url_for('user.home',username=username))
 
-    form = EditUserForm(request.form)
+    form = EditUserForm(request.form, obj=user)
     if form.validate_on_submit():
         # create an user instance not yet stored in the database
         if username != form.username.data.lower():
@@ -139,7 +137,7 @@ def edit(username):
         user.email=form.email.data.lower()
         if len(form.password.data):
             user.password=generate_password_hash(form.password.data)
-        user.role = ROLE_ADMIN if form.role_admin.data else ROLE_USER
+        user.role = form.role.data
         # Insert the record in our database and commit it
         try:
             db.session.add(user)

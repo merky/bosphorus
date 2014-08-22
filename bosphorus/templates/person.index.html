@@ -12,8 +12,12 @@
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="panel-title"><i class="fa fa-user"></i> {{ person.research_id }}  
+     
+           {% if current_user.can_edit() %}
             <a class="pull-right" href="{{ url_for('person.edit',research_id=person.research_id) }}">
-                <i class="fa fa-edit"></i> Edit</a></div>
+                <i class="fa fa-edit"></i> Edit</a>
+           {% endif %}
+        </div>
     </div>
     <div class="panel-body">
 	<div class="row">

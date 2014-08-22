@@ -182,18 +182,28 @@ def new():
         person.dob         = form.dob.data
         person.ssn         = form.ssn.data
         person.notes       = form.notes.data
-
         person.protocols   = [ResearchProtocol.query.get(x) for x in form.protocols.data]
-        # add to session
-        db.session.add(person)
-        # mark the Research ID as being used
-        rid.used = True
-        # commit changes
-        db.session.merge(rid)
-        db.session.commit()
-        # let the person know what's up
-        flash('Person added successfully!', category='success')
-        return redirect(url_for('person.list'))
+
+        # before we add, let's do a quick check
+        clinical_id_used = Person.query \
+                                 .filter(Person.clinical_id==person.clinical_id) \
+                                 .count()
+        if clinical_id_used:
+            flash('Clinical ID already in use!', 'danger')
+        else:
+            try:
+                # add to session
+                db.session.add(person)
+                # mark the Research ID as being used
+                rid.used = True
+                # commit new person
+                db.session.commit()
+            except:
+                flash('Unexpected error while creating person', 'danger')
+                db.session.rollback()
+            else:
+                flash('Person added successfully!', category='success')
+                return redirect(url_for('person.list'))
 
     elif request.method=='POST':
         # problems with form data

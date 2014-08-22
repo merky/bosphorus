@@ -11,7 +11,7 @@
 	   {% if study.person %}
              Assigned to
              <a href="{{ url_for('person.index',research_id=study.person.research_id) }}">{{ study.person.research_id }}</a>
-           {% else %}
+           {% elif current_user.can_edit() %}
 	     <a class="btn btn-primary btn-sm"
 	         href="{{ url_for('studies.assign', orthanc_id=study.get().id ) }}"
 		 role="button"><i class="fa fa-arrow-circle-right"></i> assign</a>

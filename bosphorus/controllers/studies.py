@@ -3,7 +3,7 @@ from flask.ext.login import login_required, current_user
 from sqlalchemy import or_
 
 from bosphorus.models import db, orthanc, Person, Study, ResearchID, StudyHistory, ResearchProtocol
-from bosphorus.utils  import get_redirect_target, admin_required
+from bosphorus.utils  import get_redirect_target, admin_required, modify_required
 from bosphorus.forms  import StudyAssignForm, ResearchProtocolForm
 from bosphorus.tasks  import update_studies, match_unassigned, send_study
 
@@ -83,6 +83,7 @@ def assigned():
 
 @studies.route('/<orthanc_id>/unassign')
 @login_required 
+@modify_required
 def unassign(orthanc_id):
     """ action: unassign from person """
     study = Study.query.filter(Study.orthanc_id==orthanc_id).filter(Study.exists==True).first()
@@ -103,6 +104,7 @@ def unassign(orthanc_id):
 
 @studies.route('/<orthanc_id>/assign', methods=['POST','GET'])
 @login_required 
+@modify_required
 def assign(orthanc_id):
     """ action: assign to person """
     # get orthanc study
@@ -146,6 +148,7 @@ def assign(orthanc_id):
 
 @studies.route('/<orthanc_id>/send')
 @login_required 
+@modify_required
 def send(orthanc_id,modality="XNAT"):
     """ view details of orthanc study """
     study_id = db.session.query(Study.id).filter(Study.orthanc_id==orthanc_id).first()[0]
@@ -196,6 +199,7 @@ def delete(orthanc_id):
 
 @studies.route('/<orthanc_id>/assign_to/<research_id>')
 @login_required 
+@modify_required
 def assign_to_person(orthanc_id, research_id):
     """ action: assign orthanc study to person """
 

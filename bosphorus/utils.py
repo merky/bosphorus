@@ -20,7 +20,15 @@ def admin_required(f):
     @wraps(f)
     def decorator(*args, **kwargs):
         if not current_user.is_authenticated() or not current_user.is_admin():
-            return redirect(url_for('user.login', next=request.url))
+            return redirect(url_for('user.login'))
+        return f(*args, **kwargs)
+    return decorator
+
+def modify_required(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        if not current_user.is_authenticated() or not current_user.can_edit():
+            return redirect(url_for('user.login'))
         return f(*args, **kwargs)
     return decorator
 

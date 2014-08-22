@@ -10,6 +10,12 @@
                {{ field(**kwargs) }}
              </label>
 	   </div>
+        {% elif field.type == 'RadioField' %}
+          {% for subitem in field %}
+             <label class="radio-inline">
+                {{ subitem }} {{ subitem.label }}
+             </label>
+          {% endfor %}
 	{% else %}
            {{ field(class_='form-control', **kwargs) }}
 	{% endif %}

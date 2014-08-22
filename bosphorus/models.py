@@ -14,6 +14,7 @@ from bosphorus.utils import cache
 
 ROLE_USER =1
 ROLE_ADMIN=2
+ROLE_READONLY=3
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -24,7 +25,10 @@ class User(db.Model):
     password = db.Column(db.String(120))
 
     def is_admin(self):
-        return self.role==ROLE_ADMIN
+        return self.role == ROLE_ADMIN
+
+    def can_edit(self):
+        return self.role != ROLE_READONLY
 
     def is_authenticated(self):
         return True
